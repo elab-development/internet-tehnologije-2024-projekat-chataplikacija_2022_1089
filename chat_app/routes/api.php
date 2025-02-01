@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\ChatRoomController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
@@ -39,3 +40,7 @@ Route::get('/users', [UserController::class, 'index']); // Dohvata sve korisnike
 Route::get('/users/{id}', [UserController::class, 'show']); // Dohvata određenog korisnika
 Route::get('/users/{id}/chat-rooms', [UserController::class, 'chatRooms']); // Dohvata sve chat sobe korisnika
 Route::get('/users/{id}/messages', [UserController::class, 'messages']); // Dohvata sve poruke korisnika
+
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
