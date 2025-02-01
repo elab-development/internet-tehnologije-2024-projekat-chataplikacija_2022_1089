@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('chat_rooms', function (Blueprint $table) {
-            $table->string('name')->unique()->change();
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('email'); // Dodaje UNIQUE ograničenje na kolonu 'email'
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('chat_rooms', function (Blueprint $table) {
-            $table->dropUnique(['name']);
-        }); 
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropUnique(['email']); // Uklanja UNIQUE ograničenje na koloni 'email'
+        });
     }
 };

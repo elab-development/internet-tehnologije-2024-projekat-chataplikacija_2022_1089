@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('chat_rooms', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('name')->nullable(); // Naziv chat sobe (privatni chat može biti bez naziva)
+            $table->boolean('is_private')->default(true); // Oznaka za privatnu sobu
+            $table->string('profile_picture')->nullable(); // Profilna slika sobe
+            $table->string('description')->nullable(); 
         });
     }
 

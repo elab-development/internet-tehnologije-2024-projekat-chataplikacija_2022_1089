@@ -12,17 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('messages', function (Blueprint $table) {
-            $table->dropColumn('is_read');
+            
+            $table->text('content')->nullable(); // Dodaje 'content'
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('messages', function (Blueprint $table) {
-            $table->boolean('is_read')->default(false);
+            $table->dropColumn('content');
         });
     }
 };

@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->boolean('is_read')->default(false);
+        Schema::table('chat_rooms', function (Blueprint $table) {
+            $table->dropColumn('profile_picture'); // Brisanje kolone 'profile_picture'
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::table('chat_rooms', function (Blueprint $table) {
+            $table->string('profile_picture')->nullable(); // Vraćanje kolone ako rollback-uješ migraciju
+        });
     }
 };
