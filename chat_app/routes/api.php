@@ -24,7 +24,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/chat-rooms', [ChatRoomController::class, 'index']); //Vraća listu svih chat soba.
 Route::post('/chat-rooms', [ChatRoomController::class, 'store']); //kreiranje nove chat sobe,prihvata name i created by
-Route::post('/chat-rooms/{id}/users', [ChatRoomController::class, 'addUser']);//dodavanje korisnika u sobu
 Route::delete('/chat-rooms/{id}/users/{user_id}', [ChatRoomController::class, 'removeUser']);//uklanjanje korisnika iz chat sobe
 
 /*

@@ -43,13 +43,17 @@ class UserFactory extends Factory
     */
 
     protected $model = User::class;
+    
 
     public function definition()
     {
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'password' => Hash::make('password'), // Lozinka je "password"
+            'email_verified_at' => now(),
+            'password' => bcrypt('password'), // Preporučuje se da šifra bude hashovana
+            'last_seen_at' => $this->faker->dateTimeThisYear(), // Nasumično vreme kad je korisnik poslednji put bio aktivan
+            'remember_token' => Str::random(10),
         ];
     }
 }

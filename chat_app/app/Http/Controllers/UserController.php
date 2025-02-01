@@ -25,8 +25,7 @@ class UserController extends Controller
     /**
      * Dohvata određenog korisnika.
      *
-     * @param int $id
-     * @return JsonResponse
+     * 
      */
     public function show(int $id): JsonResponse
     {
@@ -39,9 +38,7 @@ class UserController extends Controller
 
     /**
      * Dohvata sve chat sobe korisnika.
-     *
-     * @param int $id
-     * @return JsonResponse
+     
      */
     public function chatRooms(int $id): JsonResponse
     {

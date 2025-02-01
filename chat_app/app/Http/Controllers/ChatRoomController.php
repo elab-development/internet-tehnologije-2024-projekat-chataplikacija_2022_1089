@@ -44,30 +44,7 @@ class ChatRoomController extends Controller
     }
 
 
-    //dodavanje korisnika u sobu
-    public function addUser(Request $request, int $chatRoomId): JsonResponse
-    {
-        // Validacija podataka
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
 
-        // Pronalaženje chat sobe
-        $chatRoom = ChatRoom::findOrFail($chatRoomId);
-
-        // Pronalaženje korisnika
-        $user = User::findOrFail($request->input('user_id'));
-
-        // Dodavanje korisnika u chat sobu
-        $chatRoom->users()->attach($user->id);
-
-        // Vraćanje odgovora sa statusom 200 (OK)
-        return response()->json([
-            'message' => 'Korisnik je uspešno dodat u chat sobu.',
-            'chat_room' => $chatRoom,
-            'user' => $user,
-        ]);
-    }
 
 
     //uklanjanje korisnika iz chat sobe
