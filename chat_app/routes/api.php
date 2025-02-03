@@ -24,9 +24,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/chat-rooms', [ChatRoomController::class, 'index']); //Vraća listu svih chat soba.
-Route::post('/chat-rooms', [ChatRoomController::class, 'store']); //kreiranje nove chat sobe,prihvata name i created by
-Route::delete('/chat-rooms/{id}/users/{user_id}', [ChatRoomController::class, 'removeUser']);//uklanjanje korisnika iz chat sobe
 
+// Zaštićene rute za autentifikovane korisnike
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Rute za manipulaciju chat sobama
+    Route::post('/chat-rooms', [ChatRoomController::class, 'store']); // Kreiranje nove chat sobe
+    Route::delete('/chat-rooms/{id}/users/{user_id}', [ChatRoomController::class, 'removeUser']); // Uklanjanje korisnika iz chat sobe
+});
 /*
 Route::get('/messages', [MessageController::class, 'index']); // Dohvata sve poruke
 Route::get('/messages/{id}', [MessageController::class, 'show']); // Dohvata određenu poruku
@@ -44,3 +49,15 @@ Route::get('/users/{id}/messages', [UserController::class, 'messages']); // Dohv
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+//Route::post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+//Korisnik više ne može da koristi token za pristup zaštićenim rutama.
+//Ako pokuša da koristi isti token, dobija 401 Unauthorized.
+//Ako se ponovo prijavi, dobija novi token.
+
+
+
+
+
+
+

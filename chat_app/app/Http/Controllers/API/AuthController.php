@@ -17,7 +17,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|',  // Password must be confirmed
+            'password' => 'required|string|min:8|'
         ]);
 
         if($validator->fails()){
@@ -39,7 +39,8 @@ class AuthController extends Controller
             'data' => $user,
             'message' => 'User registered successfully!',
             'token' => $token,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer' // ako netko poseduje ovaj token, smatra se da je ovlašten za pristup
+            //odredjenim resursima bez dodatnih dokaza identitteta
         ]);
     }
 
@@ -52,12 +53,12 @@ class AuthController extends Controller
         ]);
 
         //Provera da li postoji korisnik sa datim email-om
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();// first uzima samo prvog korisnika
 
         // Provera lozinke
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Netacna sifra'
             ], 401);
      }
 
@@ -74,5 +75,17 @@ class AuthController extends Controller
             'token_type' =>'Bearer'
         ], 200);
     }
+
+    public function logout(Request $request)
+    {
+        // Brisanje samo trenutnog tokena (trenutne sesije korisnika)
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+          'message' => 'User logged out successfully!'
+        ], 200);
+    }
+
+
 
 }
