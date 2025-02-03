@@ -2,128 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-/*
 
 class MessageController extends Controller
 {
-     /**
-     * Dohvata listu svih poruka.
-    
-     
-    public function index(): JsonResponse
+    public function index()
     {
-        // Dohvata sve poruke
         $messages = Message::all();
-
-        // Vraća podatke u JSON formatu
-        return response()->json($messages);
+        return MessageResource::collection($messages);
     }
 
-    /**
-     * Dohvata određenu poruku.
-     
-     
-    public function show(int $id): JsonResponse
+    public function store(Request $request)
     {
-        // Pronalaženje poruke po ID-u
-        $message = Message::findOrFail($id);
-
-        // Vraća podatke u JSON formatu
-        return response()->json($message);
-    }
-
-    /**
-     * Šalje novu poruku.
-    
-     
-    public function store(Request $request): JsonResponse
-    {
-        // Validacija podataka
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'chat_room_id' => 'required|exists:chat_rooms,id',
-            'content' => 'required|string',
+       // Validacija podataka
+        $validated = $request->validate([
+            'content' => 'required|string',  
+            'chat_room_id' => 'required|exists:chat_rooms,id',  // Osigurava da chat_room_id postoji u bazi
         ]);
 
-        // Kreiranje nove poruke
+        // Kreiranje nove poruke u bazi
         $message = Message::create([
-            'user_id' => $request->input('user_id'),
-            'chat_room_id' => $request->input('chat_room_id'),
-            'content' => $request->input('content'),
+            'content' => $validated['content'],
+            'chat_room_id' => $validated['chat_room_id'],
+            'is_read' => false,  // Po defaultu, postavimo da poruka nije pročitana
         ]);
 
-        // Vraćanje odgovora sa statusom 201 (Created)
-        return response()->json($message, 201);
+        // Vraća podatke o poruci koristeći MessageResource
+        return new MessageResource($message);
     }
 
-    /**
-     * Ažurira sadržaj poruke.
-     
-     
-    public function update(Request $request, int $id): JsonResponse
-    {
-        // Validacija podataka
-        $request->validate([
-            'content' => 'required|string',
-        ]);
-
-        // Pronalaženje poruke po ID-u
-        $message = Message::findOrFail($id);
-
-        // Ažuriranje sadržaja poruke
-        $message->update([
-            'content' => $request->input('content'),
-        ]);
-
-        // Vraćanje odgovora sa statusom 200 (OK)
-        return response()->json($message);
-    }
-
-    /**
-     * Briše poruku.
-     
-     
-    public function destroy(int $id): JsonResponse
-    {
-        // Pronalaženje poruke po ID-u
-        $message = Message::findOrFail($id);
-
-        // Brisanje poruke
-        $message->delete();
-
-        // Vraćanje odgovora sa statusom 204 (No Content)
-        return response()->json(null, 204);
-    }
-}
-*/
-class MessageController extends Controller
-{
-    public function index(): JsonResponse
-    {
-        $messages = Message::all();
-        return response()->json($messages);
-    }
-
-    public function store(Request $request): JsonResponse
-    {
-        $message = Message::create($request->all());
-        return response()->json($message, 201);
-    }
-
-    public function show(int $id): JsonResponse
+    public function show(int $id)
     {
         $message = Message::findOrFail($id);
-        return response()->json($message);
+        return new MessageResource($message);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, int $id)
     {
         $message = Message::findOrFail($id);
         $message->update($request->all());
-        return response()->json($message);
+        return new MessageResource($message);
     }
 
     public function destroy(int $id): JsonResponse

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ChatRoomResource;
+use App\Http\Resources\MessageResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +22,7 @@ class UserController extends Controller
         $users = User::all();
 
         // Vraća podatke u JSON formatu
-        return response()->json($users);
+        return response()->json(UserResource::collection($users));
     }
 
     /**
@@ -27,13 +30,13 @@ class UserController extends Controller
      *
      * 
      */
-    public function show(int $id): JsonResponse
+    public function show(int $id)
     {
         // Pronalaženje korisnika po ID-u
         $user = User::findOrFail($id);
 
-        // Vraća podatke u JSON formatu
-        return response()->json($user);
+        // Vraća podatke definisanog u resource
+        return new UserResource($user);
     }
 
     /**
@@ -49,7 +52,7 @@ class UserController extends Controller
         $chatRooms = $user->chatRooms;
 
         // Vraća podatke u JSON formatu
-        return response()->json($chatRooms);
+        return response()->json(ChatRoomResource::collection($chatRooms));
     }
 
     /**
@@ -67,6 +70,6 @@ class UserController extends Controller
         $messages = $user->messages;
 
         // Vraća podatke u JSON formatu
-        return response()->json($messages);
+        return response()->json(MessageResource::collection($messages));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ChatRoomResource;
 use App\Models\ChatRoom;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -13,13 +14,11 @@ class ChatRoomController extends Controller
       Vraća listu svih chat soba.
      
      */
-    public function index(): JsonResponse
+    public function index()
     {
         // Dohvata sve chat sobe iz baze
         $chatRooms = ChatRoom::all();
-
-        // Vraća podatke u JSON formatu
-        return response()->json($chatRooms);
+        return ChatRoomResource::collection(ChatRoom::all());
     }
 
 
@@ -27,20 +26,20 @@ class ChatRoomController extends Controller
     //kreiranje nove chat sobe,prihvata name i created by
     public function store(Request $request): JsonResponse
     {
-        // Validacija podataka
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'created_by' => 'required|exists:users,id',
-        ]);
+       // Validacija podataka
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'created_by' => 'required|exists:users,id',
+    ]);
 
-        // Kreiranje nove chat sobe
-        $chatRoom = ChatRoom::create([
-            'name' => $request->input('name'),
-            'created_by' => $request->input('created_by'),
-        ]);
+    // Kreiranje nove chat sobe
+    $chatRoom = ChatRoom::create([
+        'name' => $request->input('name'),
+        'created_by' => $request->input('created_by'),
+    ]);
 
-        // Vraćanje odgovora sa statusom 201 (Created)
-        return response()->json($chatRoom, 201);
+    // Vraćanje podataka kroz ChatRoomResource sa statusom 201 (Created)
+    return response()->json(new ChatRoomResource($chatRoom), 201);
     }
 
 

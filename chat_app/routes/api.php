@@ -32,13 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/chat-rooms', [ChatRoomController::class, 'store']); // Kreiranje nove chat sobe
     Route::delete('/chat-rooms/{id}/users/{user_id}', [ChatRoomController::class, 'removeUser']); // Uklanjanje korisnika iz chat sobe
 });
-/*
-Route::get('/messages', [MessageController::class, 'index']); // Dohvata sve poruke
-Route::get('/messages/{id}', [MessageController::class, 'show']); // Dohvata određenu poruku
-Route::post('/messages', [MessageController::class, 'store']); // Šalje novu poruku
-Route::put('/messages/{id}', [MessageController::class, 'update']); // Ažurira poruku
-Route::delete('/messages/{id}', [MessageController::class, 'destroy']); // Briše poruku
-*/
+
 Route::apiResource('messages', MessageController::class);
 
 Route::get('/users', [UserController::class, 'index']); // Dohvata sve korisnike
