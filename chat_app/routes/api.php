@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//pdaci o trenutno autentifikovanom korisniku
+//podaci o trenutno autentifikovanom korisniku
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

@@ -20,6 +20,8 @@ class MessageFactory extends Factory
         return [
             'content' => $this->faker->text,  // Nasumičan tekst za sadržaj poruke
             'is_read' => $this->faker->boolean,  // Nasumično true ili false za status pročitanosti
+            'user_id' => User::inRandomOrder()->first()->id, // Nasumično korisničko ID
+            'chat_room_id' => ChatRoom::inRandomOrder()->first()->id ?? 1, // Nasumično chat soba ID
         ];
     }
 }
