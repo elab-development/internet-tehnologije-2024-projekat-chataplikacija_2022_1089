@@ -13,15 +13,36 @@ class UserController extends Controller
 {
     /**
      * Dohvata listu svih korisnika.
-     *
-     * @return JsonResponse
+     
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        // Dohvata sve korisnike
-        $users = User::all();
+        $query = User::query();
 
-        // Vraća podatke u JSON formatu
+        // Filtriranje prema imenu korisnika
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+     // Filtriranje prema email-u korisnika
+        if ($request->has('email')) {
+           $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
+        // Filtriranje prema statusu verifikacije
+        if ($request->has('email_verified_at')) {
+            $query->whereNotNull('email_verified_at');
+        }
+
+        // Filtriranje prema poslednjem viđenju
+        if ($request->has('last_seen_at')) {
+            $query->where('last_seen_at', '>=', $request->input('last_seen_at'));
+        }
+
+        // Paginacija
+        $users = $query->paginate(5);
+
+        // Vraća podatke u JSON formatu sa odgovarajućim resursom
         return response()->json(UserResource::collection($users));
     }
 
@@ -43,13 +64,26 @@ class UserController extends Controller
      * Dohvata sve chat sobe korisnika.
      
      */
-    public function chatRooms(int $id): JsonResponse
+    public function chatRooms(int $id, Request $request): JsonResponse
     {
         // Pronalaženje korisnika po ID-u
         $user = User::findOrFail($id);
 
         // Dohvata sve chat sobe korisnika
-        $chatRooms = $user->chatRooms;
+        $query = $user->chatRooms;
+        // Filtriranje prema imenu sobe
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        // Filtriranje prema privatnosti
+        if ($request->has('is_private')) {
+            $query->where('is_private', $request->input('is_private'));
+        }
+
+        // Paginacija
+        $chatRooms = $query->paginate(10);
+
 
         // Vraća podatke u JSON formatu
         return response()->json(ChatRoomResource::collection($chatRooms));
@@ -61,13 +95,30 @@ class UserController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function messages(int $id): JsonResponse
+    public function messages(int $id, Request $request): JsonResponse
     {
         // Pronalaženje korisnika po ID-u
         $user = User::findOrFail($id);
 
-        // Dohvata sve poruke korisnika
-        $messages = $user->messages;
+     
+        $query = $user->messages;
+        // Filtriranje prema statusu pročitano/nisu pročitano
+        if ($request->has('is_read')) {
+            $query->where('is_read', $request->input('is_read'));
+        }
+
+        // Filtriranje prema sadržaju poruke
+        if ($request->has('content')) {
+            $query->where('content', 'like', '%' . $request->input('content') . '%');
+        }
+
+        // Filtriranje prema chat sobi
+        if ($request->has('chat_room_id')) {
+            $query->where('chat_room_id', $request->input('chat_room_id'));
+        }
+
+        // Paginacija
+        $messages = $query->paginate(5);
 
         // Vraća podatke u JSON formatu
         return response()->json(MessageResource::collection($messages));

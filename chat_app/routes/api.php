@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+//pdaci o trenutno autentifikovanom korisniku
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+//pag
 Route::get('/chat-rooms', [ChatRoomController::class, 'index']); //Vraća listu svih chat soba.
 
 // Zaštićene rute za autentifikovane korisnike
@@ -34,16 +34,17 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::apiResource('messages', MessageController::class);
-
+//pag
 Route::get('/users', [UserController::class, 'index']); // Dohvata sve korisnike
 Route::get('/users/{id}', [UserController::class, 'show']); // Dohvata određenog korisnika
+//pag
 Route::get('/users/{id}/chat-rooms', [UserController::class, 'chatRooms']); // Dohvata sve chat sobe korisnika
+//pag
 Route::get('/users/{id}/messages', [UserController::class, 'messages']); // Dohvata sve poruke korisnika
 
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-//Route::post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 //Korisnik više ne može da koristi token za pristup zaštićenim rutama.
 //Ako pokuša da koristi isti token, dobija 401 Unauthorized.
