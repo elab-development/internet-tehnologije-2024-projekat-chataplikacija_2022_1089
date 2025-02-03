@@ -7,6 +7,7 @@ use App\Models\ChatRoom;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ChatRoomController extends Controller
 {
@@ -19,26 +20,27 @@ class ChatRoomController extends Controller
     {
         $query = ChatRoom::query();
 
-    // Filtriranje prema imenu sobe
-    if ($request->has('name')) {
-        $query->where('name', 'like', '%' . $request->input('name') . '%');
-    }
+        // Filtriranje prema imenu sobe
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
 
-    // Filtriranje prema privatnosti
-    if ($request->has('is_private')) {
-        $query->where('is_private', $request->input('is_private'));
-    }
+        // Filtriranje prema privatnosti
+        if ($request->has('is_private')) {
+         $query->where('is_private', $request->input('is_private'));
+        }
 
-    // Filtriranje prema opisu sobe
-    if ($request->has('description')) {
-        $query->where('description', 'like', '%' . $request->input('description') . '%');
-    }
 
-    // Paginacija
-    $chatRooms = $query->paginate(8);
+        // Kreiramo jedinstveni ključ za keširanje
+        $cacheKey = 'chat_rooms_' . md5($request->fullUrl()); // Koristimo URL kao ključ za keširanje
 
-    // Vraća podatke u JSON formatu sa odgovarajućim resursom
-    return ChatRoomResource::collection($chatRooms);
+        // Keširamo podatke sa paginacijom
+        $chatRooms = Cache::remember($cacheKey, 60, function () use ($query) {
+            return $query->paginate(8); 
+        });
+
+        
+        return ChatRoomResource::collection($chatRooms);
     }
 
 

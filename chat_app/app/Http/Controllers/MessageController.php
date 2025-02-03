@@ -6,13 +6,22 @@ use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MessageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $messages = Message::all();
-        return MessageResource::collection($messages);
+        // Kreiramo osnovni upit
+        $query = Message::query();
+
+    
+        $cacheKey = 'messages_' . md5($request->fullUrl()); // Koristimo URL kao ključ za keširanje
+
+        $messages = Cache::remember($cacheKey, 60, function () use ($query) {
+            return $query->paginate(10); // 10 je broj poruka po stranici
+        });
+            return MessageResource::collection($messages);
     }
 
     public function store(Request $request)
