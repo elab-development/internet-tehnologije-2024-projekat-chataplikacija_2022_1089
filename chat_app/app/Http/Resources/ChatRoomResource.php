@@ -16,8 +16,9 @@ class ChatRoomResource extends JsonResource
     {
         return [
             'name' => $this->name,
-            'is_private' => $this->is_private,
             'description' => $this->description,
+            'is_private' => $this->is_private,
+            
         ];
     }
 }

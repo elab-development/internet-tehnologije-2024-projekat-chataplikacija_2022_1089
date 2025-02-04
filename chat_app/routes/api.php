@@ -30,17 +30,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rute za manipulaciju chat sobama
     Route::post('/chat-rooms', [ChatRoomController::class, 'store']); // Kreiranje nove chat sobe
-    Route::delete('/chat-rooms/{id}/users/{user_id}', [ChatRoomController::class, 'removeUser']); // Uklanjanje korisnika iz chat sobe
+    Route::delete('/chat-rooms/deleteByName/{name}', [ChatRoomController::class, 'destroyByName']);
 });
+
 
 Route::apiResource('messages', MessageController::class);
 //pag
 Route::get('/users', [UserController::class, 'index']); // Dohvata sve korisnike
 Route::get('/users/{id}', [UserController::class, 'show']); // Dohvata određenog korisnika
 //pag
-Route::get('/users/{id}/chat-rooms', [UserController::class, 'chatRooms']); // Dohvata sve chat sobe korisnika
+//Route::get('/users/{id}/chat-rooms', [UserController::class, 'chatRooms']); // Dohvata sve chat sobe korisnika
 //pag
-Route::get('/users/{id}/messages', [UserController::class, 'messages']); // Dohvata sve poruke korisnika
+Route::get('/messages/user/{userId}', [MessageController::class, 'getMessagesByUser']);// Dohvata sve poruke korisnika
 
 
 Route::post('/register', [AuthController::class, 'register']);

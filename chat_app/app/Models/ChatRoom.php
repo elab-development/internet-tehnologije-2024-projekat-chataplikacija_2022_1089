@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ChatRoom extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'created_by'];
+    protected $fillable = ['name', 'description', 'is_private'];
 
     public function messages(): HasMany
     {

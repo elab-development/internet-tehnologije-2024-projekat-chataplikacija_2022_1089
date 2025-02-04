@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ChatRoomResource;
 use App\Models\ChatRoom;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -40,52 +41,48 @@ class ChatRoomController extends Controller
         });
 
         
-        return ChatRoomResource::collection($chatRooms);
+        return ChatRoomResource::collection($chatRooms->items());
     }
 
 
 
-    //kreiranje nove chat sobe,prihvata name i created by
+    //kreiranje nove chat sobe
     public function store(Request $request): JsonResponse
     {
        // Validacija podataka
         $request->validate([
             'name' => 'required|string|max:255',
-            'created_by' => 'required|exists:users,id',
+            'description' => 'nullable|string',
+            'is_private' => 'boolean',
         ]);
 
         // Kreiranje nove chat sobe
         $chatRoom = ChatRoom::create([
             'name' => $request->input('name'),
-            'created_by' => $request->input('created_by'),
+            'description' => $request->input('description'),
+            'is_private' => $request->input('is_private', false),  // Ako nije postavljeno, podrazumevano je false
+    
         ]);
 
         // Vraćanje podataka kroz ChatRoomResource sa statusom 201 (Created)
         return response()->json(new ChatRoomResource($chatRoom), 201);
         }
 
-
-
-
-
-    //uklanjanje korisnika iz chat sobe
-    public function removeUser(int $chatRoomId, int $userId): JsonResponse
-        {
-        // Pronalaženje chat sobe
-        $chatRoom = ChatRoom::findOrFail($chatRoomId);
-
-        // Pronalaženje korisnika
-        $user = User::findOrFail($userId);
-
-        // Uklanjanje korisnika iz chat sobe
-        $chatRoom->users()->detach($user->id);
-
-        // Vraćanje odgovora sa statusom 200 (OK)
-        return response()->json([
-            'message' => 'Korisnik je uspešno uklonjen iz chat sobe.',
-            'chat_room' => $chatRoom,
-            'user' => $user,
-        ]);
+    //brisanje sobe sa odredjenim imenom
+    public function destroyByName($name)
+    {
+        
+        $chatRoom = ChatRoom::where('name', $name)->first();
+            
+        if (!$chatRoom) {
+            return response()->json(['message' => 'Chat room not found'], 404);
+        }
+            
+        $chatRoom->delete();
+            
+        return response()->json(['message' => 'Chat room deleted successfully'], 200);
+        
     }
+        
 
 }

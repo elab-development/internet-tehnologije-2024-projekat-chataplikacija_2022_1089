@@ -30,6 +30,8 @@ class MessageController extends Controller
         $validated = $request->validate([
             'content' => 'required|string',  
             'chat_room_id' => 'required|exists:chat_rooms,id',  // Osigurava da chat_room_id postoji u bazi
+            'user_id' => 'required|exists:users,id',
+            'is_read' => 'nullable|boolean'
         ]);
 
         // Kreiranje nove poruke u bazi
@@ -37,6 +39,7 @@ class MessageController extends Controller
             'content' => $validated['content'],
             'chat_room_id' => $validated['chat_room_id'],
             'is_read' => false,  // Po defaultu, postavimo da poruka nije pročitana
+            'user_id' => $validated['user_id'],
         ]);
 
         // Vraća podatke o poruci koristeći MessageResource
@@ -61,5 +64,13 @@ class MessageController extends Controller
         $message = Message::findOrFail($id);
         $message->delete();
         return response()->json(null, 204);
+    }
+    public function getMessagesByUser($userId)
+    {
+        // Pretraga poruka po user_id
+        $messages = Message::where('user_id', $userId)->paginate(10);
+
+        // Vraćanje poruka kao JSON
+        return MessageResource::collection($messages);
     }
 }

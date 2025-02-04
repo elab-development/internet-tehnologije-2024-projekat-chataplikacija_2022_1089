@@ -60,7 +60,7 @@ class UserController extends Controller
 
     
      //Dohvata sve chat sobe korisnika.
-     
+     /*
     public function chatRooms(int $id, Request $request): JsonResponse
     {
         // Pronalaženje korisnika po ID-u
@@ -86,7 +86,7 @@ class UserController extends Controller
 
         return response()->json(ChatRoomResource::collection($chatRooms));
     }
-
+    
     
      //Dohvata sve poruke korisnika.
     public function messages(int $id, Request $request): JsonResponse
@@ -116,4 +116,5 @@ class UserController extends Controller
         // Vraća podatke u JSON formatu
         return response()->json(MessageResource::collection($messages));
     }
+    */
 }
