@@ -18,11 +18,11 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Admin User',  // Specifično ime admina
-            'email' => 'admin@example.com',  // Specifičan email admina
+            'name' => 'Admin User',  
+            'email' => 'admin@example.com',  
             'password' => Hash::make('adminpassword'),  // Hashovana šifra za admina
-            'email_verified_at' => now(),  // Automatski postavi trenutni datum za verifikaciju email-a
-            'last_seen_at' => now(),  // Automatski postavi trenutni datum za poslednje viđanje
+            'email_verified_at' => now(),  
+            'last_seen_at' => now(),  
             'remember_token' => Str::random(10),  // Nasumični token za "remember me" funkcionalnost
         ]);
 

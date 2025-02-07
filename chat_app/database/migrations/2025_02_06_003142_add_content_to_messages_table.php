@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('messages', function (Blueprint $table) {
-            
-            $table->text('content')->nullable(); // Dodaje 'content'
+            $table->text('content')->nullable();
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('messages', function (Blueprint $table) {
             $table->dropColumn('content');

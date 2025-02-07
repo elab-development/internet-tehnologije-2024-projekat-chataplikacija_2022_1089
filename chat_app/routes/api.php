@@ -22,26 +22,25 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-//pag
 Route::get('/chat-rooms', [ChatRoomController::class, 'index']); //Vraća listu svih chat soba.
 
 // Zaštićene rute za autentifikovane korisnike
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Rute za manipulaciju chat sobama
     Route::post('/chat-rooms', [ChatRoomController::class, 'store']); // Kreiranje nove chat sobe
     Route::delete('/chat-rooms/deleteByName/{name}', [ChatRoomController::class, 'destroyByName']);
+
+    Route::apiResource('messages', MessageController::class);
+    //vracanje svih poruka nekog usera po id-u
+    Route::get('/messages/user/{userId}', [MessageController::class, 'getMessagesByUser']);
+    //vracanje svih poruka iz neke chat sobe
+    Route::get('/chat-rooms/{name}/messages', [MessageController::class, 'getMessagesByChatRoomName']);
+
 });
 
-
-Route::apiResource('messages', MessageController::class);
-//pag
 Route::get('/users', [UserController::class, 'index']); // Dohvata sve korisnike
 Route::get('/users/{id}', [UserController::class, 'show']); // Dohvata određenog korisnika
-//pag
-//Route::get('/users/{id}/chat-rooms', [UserController::class, 'chatRooms']); // Dohvata sve chat sobe korisnika
-//pag
-Route::get('/messages/user/{userId}', [MessageController::class, 'getMessagesByUser']);// Dohvata sve poruke korisnika
+// Dohvata sve poruke korisnika
 
 
 Route::post('/register', [AuthController::class, 'register']);

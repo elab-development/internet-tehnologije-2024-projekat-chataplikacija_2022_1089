@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('chat_rooms', function (Blueprint $table) {
-            $table->text('description')->nullable()->change(); // Menjanje kolone 'description' u tip 'text'
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('email'); 
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('chat_rooms', function (Blueprint $table) {
-            $table->string('description')->nullable()->change(); // Vraćanje na originalnu kolonu 'string'
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropUnique(['email']); 
         });
     }
 };

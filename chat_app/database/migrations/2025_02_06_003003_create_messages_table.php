@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('messages', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id'); 
-            $table->unsignedBigInteger('chat_room_id'); 
+        Schema::create('messages', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->boolean('is_read')->default(false);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('chat_room_id');
+            $table->string('sender_name');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('chat_room_id')->references('id')->on('chat_rooms')->onDelete('cascade');
-    
         });
     }
 
@@ -25,8 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('messages', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('messages');
     }
 };

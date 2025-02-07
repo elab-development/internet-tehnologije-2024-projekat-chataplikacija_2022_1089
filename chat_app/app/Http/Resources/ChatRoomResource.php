@@ -18,7 +18,6 @@ class ChatRoomResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'is_private' => $this->is_private,
-            
         ];
     }
 }

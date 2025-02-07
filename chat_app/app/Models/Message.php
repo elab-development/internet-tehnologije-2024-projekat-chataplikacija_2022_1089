@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Message extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'chat_room_id', 'content', 'is_read'];
+    protected $fillable = ['user_id', 'chat_room_id', 'content','sender_name', 'is_read'];
 
     public function user(): BelongsTo
     {

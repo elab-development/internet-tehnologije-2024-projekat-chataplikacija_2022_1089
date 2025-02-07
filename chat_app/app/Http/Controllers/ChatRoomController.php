@@ -14,7 +14,6 @@ class ChatRoomController extends Controller
 {
     /*
       Vraća listu svih chat soba.
-     
      */
     //paginacija i filtriranje
     public function index(Request $request)
@@ -71,17 +70,14 @@ class ChatRoomController extends Controller
     //brisanje sobe sa odredjenim imenom
     public function destroyByName($name)
     {
-        
         $chatRoom = ChatRoom::where('name', $name)->first();
-            
+
         if (!$chatRoom) {
             return response()->json(['message' => 'Chat room not found'], 404);
-        }
-            
-        $chatRoom->delete();
-            
+        }  
+
+        $chatRoom->delete();  
         return response()->json(['message' => 'Chat room deleted successfully'], 200);
-        
     }
         
 

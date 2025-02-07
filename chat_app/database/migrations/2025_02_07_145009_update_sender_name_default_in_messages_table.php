@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('last_seen_at')->nullable()->after('email');
+        Schema::table('messages', function (Blueprint $table) {
+            $table->string('sender_name')->default('Anonymous')->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('last_seen_at');
+        Schema::table('messages', function (Blueprint $table) {
+            $table->string('sender_name')->default(null)->change();
         });
     }
 };
