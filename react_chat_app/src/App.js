@@ -6,6 +6,7 @@ import Navbar from "./components/NavBar";
 import ChatRooms from "./components/ChatRooms";
 import { useState } from "react";
 import CreateGroup from "./components/CreateGroup";
+import UserCard from "./components/UserCard";
 
 function App() {
   const location = useLocation(); 
@@ -41,14 +42,16 @@ function App() {
   
   return (
     <div>
-      {(location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/") && <Navbar /> }
 
+      {(location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/") && <Navbar /> }
+     
       <Routes>
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/chatrooms" element={<ChatRooms rooms={rooms} />} />
         <Route path="/create-group" element={<CreateGroup addRoom={addRoom} deleteRoom={deleteRoom} rooms={rooms} />} />
+        <Route path="/profile" element={<UserCard />} />
       </Routes>
     </div>
   );

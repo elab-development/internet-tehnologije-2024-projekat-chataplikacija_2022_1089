@@ -42,7 +42,7 @@ const CreateGroup = ({addRoom, deleteRoom, rooms}) => {
         {rooms.map((room) => (
           <li key={room.id}>
             {room.name}  
-            <button onClick={() => handleDelete(room.name)}>Obriši❌</button>
+            <button onClick={() => handleDelete(room.name)}>Obriši ❌</button>
           </li>
         ))}
       </ul>

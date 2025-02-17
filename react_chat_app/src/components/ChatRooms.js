@@ -8,6 +8,7 @@ const ChatRooms = ({rooms}) => {
   return (
     <div className="chat-rooms">
       <h2>Chat Sobe</h2>
+      <div className="chat-content">
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
@@ -17,6 +18,10 @@ const ChatRooms = ({rooms}) => {
           </li>
         ))}
       </ul>
+      <div className="images-container">
+        <img src="images/group-chat-icon.jpg" alt="Chat" className="right-image" />
+    </div>
+    </div>
     </div>
   );
 };

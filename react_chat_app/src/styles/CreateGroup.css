@@ -18,12 +18,12 @@
   }
   
   .create-group button:hover {
-    background-color: #45a049;
+    background-color: #b0311b;
   }
   button {
-    margin-left: 10px;
+    margin-left: 5px;
     padding: 5px 10px;
-    background-color: red;
+    background-color: rgb(86, 79, 186);
     color: white;
     border: none;
     cursor: pointer;
@@ -31,7 +31,7 @@
   }
   
   button:hover {
-    background-color: darkred;
+    background-color: rgb(32, 92, 183);
   }
   
   ul {
@@ -47,4 +47,5 @@
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
   }
+
   

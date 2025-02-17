@@ -1,12 +1,30 @@
-.chat-rooms {
+
+  .chat-rooms {
+    display: flex;
+    flex-direction: column; /* Postavlja naslov iznad liste */
     padding: 20px;
-  }
-  
-  .chat-rooms h2 {
+}
+
+.chat-rooms h2 {
     font-size: 2rem;
-  }
-  
-  .chat-room {
+    text-align: left; /* Poravnanje naslova */
+    margin-bottom: 10px;
+}
+
+.chat-content {
+    display: flex;
+    justify-content: space-between; /* Lista levo, slika desno */
+    align-items: flex-start; /* Poravnanje na vrhu */
+}
+
+.chat-rooms ul {
+    flex: 1; /* Lista chat soba zauzima preostali prostor */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.chat-room {
     display: block;
     padding: 10px;
     margin: 10px 0;
@@ -14,8 +32,19 @@
     border-radius: 5px;
     text-decoration: none;
     color: #333;
-  }
-  
-  .chat-room:hover {
+}
+
+.chat-room:hover {
     background-color: #ddd;
-  }
+}
+
+.images-container {
+    flex-shrink: 0; /* Sprečava smanjivanje slike */
+    margin-left: 100px; /* Razmak između liste i slike */
+}
+
+.right-image {
+    max-width: 1600px; /* Podesi veličinu slike po potrebi */
+    height: auto;
+    border-radius: 10px;
+}
