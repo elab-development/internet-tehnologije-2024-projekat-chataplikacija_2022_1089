@@ -30,7 +30,7 @@ const Navbar = () => {
         <li>
           <Link to="/create-group">
             <MdOutlineGroups size={24} />
-            <span>Kreiraj grupu</span>
+            <span>Kreiraj/Obriši grupu</span>
           </Link>
         </li>
         <li>

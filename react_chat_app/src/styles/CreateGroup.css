@@ -1,0 +1,50 @@
+.create-group {
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .create-group input {
+    padding: 0.5rem;
+    margin-right: 1rem;
+  }
+  
+  .create-group button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .create-group button:hover {
+    background-color: #45a049;
+  }
+  button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: darkred;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+  
