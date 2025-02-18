@@ -7,20 +7,16 @@ import ChatRooms from "./components/ChatRooms";
 import { useState } from "react";
 import CreateGroup from "./components/CreateGroup";
 import UserCard from "./components/UserCard";
+import ChatRoom from "./components/ChatRoom";
 
 function App() {
   const location = useLocation(); 
 
   const [rooms, setRooms] = useState(() => {
     const savedRooms = localStorage.getItem("rooms");
-    return savedRooms ? JSON.parse(savedRooms) : [
-      { id: 1, name: "Grupa1" },
-      { id: 2, name: "Chatovanje" },
-      { id: 3, name: "Fakultet grupa studenata" },
-      { id: 4, name: "Prijatelji <3" }
-    ];
+    return savedRooms ? JSON.parse(savedRooms) : [];
   });
-    // Funkcija za dodavanje nove sobe
+    // dodavanje nove sobe
     const addRoom = (newRoom) => {
       setRooms((prevRooms) => {
         const updatedRooms = [...prevRooms, newRoom];
@@ -52,6 +48,7 @@ function App() {
         <Route path="/chatrooms" element={<ChatRooms rooms={rooms} />} />
         <Route path="/create-group" element={<CreateGroup addRoom={addRoom} deleteRoom={deleteRoom} rooms={rooms} />} />
         <Route path="/profile" element={<UserCard />} />
+        <Route path="/chat/:roomId" element={<ChatRoom />} />
       </Routes>
     </div>
   );

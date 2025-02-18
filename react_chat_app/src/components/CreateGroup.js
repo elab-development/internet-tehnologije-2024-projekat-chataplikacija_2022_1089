@@ -7,7 +7,7 @@ const CreateGroup = ({addRoom, deleteRoom, rooms}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Proveri da li je ime sobe prazno
+    
     if (!roomName) {
       alert("Ime sobe je obavezno!");
       return;
@@ -15,13 +15,19 @@ const CreateGroup = ({addRoom, deleteRoom, rooms}) => {
 
     // Dodavanje nove sobe u lokalno stanje 
     const newRoom = { id: Date.now(), name: roomName };
+    const savedRooms = JSON.parse(localStorage.getItem('rooms')) || [];
+    savedRooms.push(newRoom);
+    localStorage.setItem('rooms', JSON.stringify(savedRooms));
     addRoom(newRoom);
     setRoomName("");
   };
 
-  const handleDelete = (roomName) => {
-    if (window.confirm(`Da li sigurno želiš da obrišeš sobu "${roomName}"?`)) {
-      deleteRoom(roomName);
+  const handleDelete = (roomId) => {
+    if (window.confirm(`Da li sigurno želiš da obrišeš sobu?`)) {
+      // Filtriramo sobe iz localStorage
+      const updatedRooms = rooms.filter((room) => room.id !== roomId);
+      localStorage.setItem('rooms', JSON.stringify(updatedRooms));
+      deleteRoom(roomId); 
     }
   };
 
