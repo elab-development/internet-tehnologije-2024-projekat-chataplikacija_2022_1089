@@ -1,100 +1,158 @@
-
 .chat-room-container {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  
-  .chat-room-container h2 {
-    text-align: center;
-    font-size: 28px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  
-  .chat-window {
-    max-height: 400px;
-    overflow-y: scroll;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-  .chat-window div {
-    margin-bottom: 10px;
-    padding: 8px;
-    border-radius: 10px;
-    font-size: 16px;
-    background-color: #e9f5ff;
-  }
+.chat-room-container h2 {
+  text-align: center;
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.chat-window {
+  max-height: 400px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  padding: 15px;
+  /*background-color: #fff;*/
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 16px;
+  max-width: 70%;
+  word-wrap: break-word;
+  position: relative; 
+
+}
+
+/* Poruke ulogovanog korisnika - DESNA STRANA */
+.my-message {
+  background-color: #007bff;
+  color: white;
+  text-align: right;
+  align-self: flex-end;
+  border-radius: 10px 10px 0 10px;
+  padding: 10px;
+}
+
+/* Poruke drugih korisnika - LEVA STRANA */
+.other-message {
+  background-color: #a03bda;
+  color: white;
+  text-align: left;
+  align-self: flex-start;
+  border-radius: 10px 10px 10px 0;
+  padding: 10px;
+}
+
+.user-switch-container {
+  margin-bottom: 15px;
+}
+
+.user-switch-container button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #a03bda;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.user-switch-container button:hover {
+  background-color: #8431b4;
+}
+
+.input-message {
+  width: calc(100% - 100px);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+}
+
+.send-message-button {
+  background-color: rgb(184, 33, 96);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.send-message-button:hover {
+  background-color: rgb(148, 27, 77);
+}
+.add-user-button{
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.current-user-button {
+  background-color: #007bff !important; 
+  color: white !important;
+  border: none !important;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.current-user-button:hover {
+  background-color: #0061c9!important; /* Tamnija ljubičasta kad se pređe mišem */
+}
+.delete-button {
+  background-color: rgb(184, 33, 96);
+  color: white;
+  border: none;
+  border-radius: 10%;
+  padding: 5px 5px;
+  cursor: pointer;
+  font-size: 10px;
+  position: absolute;
   
- 
-  .chat-window div.user1-message {
-    background-color: #d1e7fd;
-    text-align: left;
-    border-radius: 10px 10px 10px 0;
-  }
-  
-  
-  .chat-window div.user2-message {
-    background-color: #d1ffd7;
-    text-align: right;
-    border-radius: 10px 10px 0 10px;
-  }
-  
-  
-  .switch-user-button {
-    padding: 8px 16px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    margin-bottom: 20px;
-  }
-  
-  .switch-user-button:hover {
-    background-color: #45a049;
-  }
-  
-  .input-message {
-    width: calc(100% - 100px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-right: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .input-message:focus {
-    outline: none;
-    border-color: #4caf50;
-  }
-  
- 
-  .send-message-button {
-    background-color: #007bff;
-  }
-  
-  .send-message-button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: none; /* Sakrij dugme dok ne pređete mišem */
+}
+
+.message:hover .delete-button {
+  display: block; /* Prikazivanje dugmeta kada pređete mišem preko poruke */
+}
+
+.add-user-button{
+  background-color: rgb(184, 33, 96);
+}
+.add-user-button:hover{
+  background-color: rgb(155, 28, 81);
+}
+.add-user-container{
+  font-size: 18px;
+}
   
   
   
