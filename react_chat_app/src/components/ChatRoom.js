@@ -14,6 +14,10 @@ const ChatRoom = () => {
   const [newUserName, setNewUserName] = useState(""); 
   const [activeUser, setActiveUser] = useState(null);
   const [showDeleteButton, setShowDeleteButton] = useState(null);
+  // Paginacija
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [messagesPerPage] = useState(10); 
+  const [searchText, setSearchText] = useState("");
 
   // Učitaj prethodne poruke iz localStorage
   useEffect(() => {
@@ -44,12 +48,31 @@ const ChatRoom = () => {
     }
   }, [roomId]);
 
+  const indexOfLastMessage = currentPage * messagesPerPage;
+  const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
+  const currentMessages = messages
+    .filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())) // Filter za pretragu
+    .slice(indexOfFirstMessage, indexOfLastMessage); 
+
   const handleMouseEnter = (index) => {
     setShowDeleteButton(index);
   };
   
   const handleMouseLeave = () => {
     setShowDeleteButton(null);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => prevPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prevPage => prevPage - 1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1); // Resetuj stranicu na prvu kada se pretraga menja
   };
   
   const sendMessage = () => {
@@ -122,10 +145,19 @@ const ChatRoom = () => {
           </button>
         ))}
       </div>
+      <div className="search-container">
+        <input
+          type="text"
+          value={searchText}
+          onChange={handleSearchChange}
+          placeholder="Pretraži poruke..."
+        />
+      </div>
+
 
       <div className="chat-window" style={backgroundStyle}>
       
-        {messages.map((msg, index) => (
+        {currentMessages.map((msg, index) => (
           <div
             key={index} className={`message ${msg.user === currentUser ? "my-message" : "other-message"}`}
             onMouseEnter={() => handleMouseEnter(index)}
@@ -143,6 +175,20 @@ const ChatRoom = () => {
             )}
             </div>
       ))}
+      </div>
+      <div className="pagination-controls">
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          Prethodna
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={indexOfLastMessage >= messages.filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())).length}
+        >
+          Sledeća
+        </button>
       </div>
 
       <input
