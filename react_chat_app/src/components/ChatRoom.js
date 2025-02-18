@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import "../styles/ChatRoom.css";
 import backgroundImage from '../pozadina.jpg';
+import backgroundImage from '../pozadina.jpg';
 
 
 const ChatRoom = () => {
@@ -9,7 +10,12 @@ const ChatRoom = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null); 
+  const [currentUser, setCurrentUser] = useState(null); 
   const [roomName, setRoomName] = useState('');
+  const [users, setUsers] = useState([]); 
+  const [newUserName, setNewUserName] = useState(""); 
+  const [activeUser, setActiveUser] = useState(null);
+  const [showDeleteButton, setShowDeleteButton] = useState(null);
   const [users, setUsers] = useState([]); 
   const [newUserName, setNewUserName] = useState(""); 
   const [activeUser, setActiveUser] = useState(null);
@@ -27,6 +33,12 @@ const ChatRoom = () => {
       setActiveUser(storedUser.name);
     
     }    
+    const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (storedUser && storedUser.name) {
+      setCurrentUser(storedUser.name);
+      setActiveUser(storedUser.name);
+    
+    }    
     const savedMessages = JSON.parse(localStorage.getItem(roomId)) || [];
     setMessages(savedMessages);
     // Učitavanje imena sobe 
@@ -37,6 +49,15 @@ const ChatRoom = () => {
       setRoomName(room.name);
     }else {
         setRoomName('Room not found'); 
+      }
+
+    const savedUsers = JSON.parse(localStorage.getItem(`users_${roomId}`)) || [];
+    setUsers(savedUsers);
+
+    if (savedUsers.length > 0 && !storedUser) {//ako nema ulogovanog korisnika, postavlja prvog iz liste kao ulogovanog 
+      setCurrentUser(savedUsers[0]);
+      setActiveUser(savedUsers[0]);
+    }
       }
 
     const savedUsers = JSON.parse(localStorage.getItem(`users_${roomId}`)) || [];
@@ -77,8 +98,10 @@ const ChatRoom = () => {
   
   const sendMessage = () => {
     if (message.trim() && currentUser) {
+    if (message.trim() && currentUser) {
       // Dodajte novu poruku u niz
       const newMessage = {
+        user: activeUser,
         user: activeUser,
         content: message,
         timestamp: new Date().toISOString(),
@@ -93,6 +116,32 @@ const ChatRoom = () => {
     }
   };
 
+  const addUser = () => {
+    if (newUserName.trim() && !users.includes(newUserName)) {
+      const updatedUsers = [...users, newUserName];
+      setUsers(updatedUsers);
+      localStorage.setItem(`users_${roomId}`, JSON.stringify(updatedUsers));
+      setNewUserName("");
+    }
+  };
+  const handleDelete = (index) => {
+    const updatedMessages = [...messages];
+    updatedMessages.splice(index, 1);  // Uklanja poruku na datom indeksu
+    setMessages(updatedMessages);
+    
+    // Čuvanje ažuriranih poruka u localStorage
+    localStorage.setItem(roomId, JSON.stringify(updatedMessages));
+  };
+
+  const switchUser = (user) => {
+    setActiveUser(user);
+  };
+  const backgroundStyle = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  };
   const addUser = () => {
     if (newUserName.trim() && !users.includes(newUserName)) {
       const updatedUsers = [...users, newUserName];
@@ -162,7 +211,22 @@ const ChatRoom = () => {
             key={index} className={`message ${msg.user === currentUser ? "my-message" : "other-message"}`}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
+            key={index} className={`message ${msg.user === currentUser ? "my-message" : "other-message"}`}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={handleMouseLeave}
           >
+            <strong>{msg.user}:</strong> {msg.content}
+      
+            {showDeleteButton === index && (
+              <button
+                className="delete-button"
+                onClick={() => handleDelete(index)}
+              >
+                Obrisi poruku ❌
+              </button>
+            )}
+            </div>
+      ))}
             <strong>{msg.user}:</strong> {msg.content}
       
             {showDeleteButton === index && (
