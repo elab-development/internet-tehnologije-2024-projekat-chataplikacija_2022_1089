@@ -15,7 +15,7 @@ const Login = () => {
   if (userData && userData.email === email) {
     localStorage.setItem("loggedInUser", JSON.stringify(userData)); // Postavljamo aktivnog korisnika
     console.log("Uspešno prijavljen:", userData);
-    navigate("/chatrooms");
+    navigate("/welcomePage");
   } else {
     alert("Neispravan email ili lozinka");
   }

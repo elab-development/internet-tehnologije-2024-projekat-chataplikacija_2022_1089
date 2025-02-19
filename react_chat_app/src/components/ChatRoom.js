@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import "../styles/ChatRoom.css";
-import backgroundImage from '../pozadina.jpg';
-import backgroundImage from '../pozadina.jpg';
+import backgroundImage from '../pozadinaa.jpg';
 
 
 const ChatRoom = () => {
@@ -10,29 +9,19 @@ const ChatRoom = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState(null); 
-  const [currentUser, setCurrentUser] = useState(null); 
   const [roomName, setRoomName] = useState('');
   const [users, setUsers] = useState([]); 
   const [newUserName, setNewUserName] = useState(""); 
   const [activeUser, setActiveUser] = useState(null);
   const [showDeleteButton, setShowDeleteButton] = useState(null);
-  const [users, setUsers] = useState([]); 
-  const [newUserName, setNewUserName] = useState(""); 
-  const [activeUser, setActiveUser] = useState(null);
-  const [showDeleteButton, setShowDeleteButton] = useState(null);
-  // Paginacija
-  const [currentPage, setCurrentPage] = useState(1); 
-  const [messagesPerPage] = useState(10); 
-  const [searchText, setSearchText] = useState("");
+
+    // Paginacija
+    const [currentPage, setCurrentPage] = useState(1); 
+    const [messagesPerPage] = useState(10); 
+    const [searchText, setSearchText] = useState("");
 
   // Učitaj prethodne poruke iz localStorage
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (storedUser && storedUser.name) {
-      setCurrentUser(storedUser.name);
-      setActiveUser(storedUser.name);
-    
-    }    
     const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
     if (storedUser && storedUser.name) {
       setCurrentUser(storedUser.name);
@@ -58,22 +47,13 @@ const ChatRoom = () => {
       setCurrentUser(savedUsers[0]);
       setActiveUser(savedUsers[0]);
     }
-      }
-
-    const savedUsers = JSON.parse(localStorage.getItem(`users_${roomId}`)) || [];
-    setUsers(savedUsers);
-
-    if (savedUsers.length > 0 && !storedUser) {//ako nema ulogovanog korisnika, postavlja prvog iz liste kao ulogovanog 
-      setCurrentUser(savedUsers[0]);
-      setActiveUser(savedUsers[0]);
-    }
   }, [roomId]);
-
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages
     .filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())) // Filter za pretragu
     .slice(indexOfFirstMessage, indexOfLastMessage); 
+
 
   const handleMouseEnter = (index) => {
     setShowDeleteButton(index);
@@ -82,15 +62,12 @@ const ChatRoom = () => {
   const handleMouseLeave = () => {
     setShowDeleteButton(null);
   };
-
   const handleNextPage = () => {
     setCurrentPage(prevPage => prevPage + 1);
   };
-
   const handlePreviousPage = () => {
     setCurrentPage(prevPage => prevPage - 1);
   };
-
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
     setCurrentPage(1); // Resetuj stranicu na prvu kada se pretraga menja
@@ -98,10 +75,8 @@ const ChatRoom = () => {
   
   const sendMessage = () => {
     if (message.trim() && currentUser) {
-    if (message.trim() && currentUser) {
       // Dodajte novu poruku u niz
       const newMessage = {
-        user: activeUser,
         user: activeUser,
         content: message,
         timestamp: new Date().toISOString(),
@@ -142,32 +117,6 @@ const ChatRoom = () => {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
   };
-  const addUser = () => {
-    if (newUserName.trim() && !users.includes(newUserName)) {
-      const updatedUsers = [...users, newUserName];
-      setUsers(updatedUsers);
-      localStorage.setItem(`users_${roomId}`, JSON.stringify(updatedUsers));
-      setNewUserName("");
-    }
-  };
-  const handleDelete = (index) => {
-    const updatedMessages = [...messages];
-    updatedMessages.splice(index, 1);  // Uklanja poruku na datom indeksu
-    setMessages(updatedMessages);
-    
-    // Čuvanje ažuriranih poruka u localStorage
-    localStorage.setItem(roomId, JSON.stringify(updatedMessages));
-  };
-
-  const switchUser = (user) => {
-    setActiveUser(user);
-  };
-  const backgroundStyle = {
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-  };
   return (
     <div className="chat-room-container">
       <h2>Chat Grupa: {roomName || 'Loading...'}</h2>
@@ -178,9 +127,19 @@ const ChatRoom = () => {
           type="text"
           value={newUserName}
           onChange={(e) => setNewUserName(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && addUser()} 
           placeholder="Unesite ime korisnika"
         />
+        
         <button className='add-user-button' onClick={addUser}>Dodaj korisnika</button>
+      </div>
+      <div className="search-container">
+        <input
+          type="text"
+          value={searchText}
+          onChange={handleSearchChange}
+          placeholder="Pretraži poruke..."
+        />
       </div>
 
       <div className="user-switch-container">
@@ -194,14 +153,6 @@ const ChatRoom = () => {
           </button>
         ))}
       </div>
-      <div className="search-container">
-        <input
-          type="text"
-          value={searchText}
-          onChange={handleSearchChange}
-          placeholder="Pretraži poruke..."
-        />
-      </div>
 
 
       <div className="chat-window" style={backgroundStyle}>
@@ -211,22 +162,7 @@ const ChatRoom = () => {
             key={index} className={`message ${msg.user === currentUser ? "my-message" : "other-message"}`}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
-            key={index} className={`message ${msg.user === currentUser ? "my-message" : "other-message"}`}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
           >
-            <strong>{msg.user}:</strong> {msg.content}
-      
-            {showDeleteButton === index && (
-              <button
-                className="delete-button"
-                onClick={() => handleDelete(index)}
-              >
-                Obrisi poruku ❌
-              </button>
-            )}
-            </div>
-      ))}
             <strong>{msg.user}:</strong> {msg.content}
       
             {showDeleteButton === index && (
@@ -254,12 +190,12 @@ const ChatRoom = () => {
           Sledeća
         </button>
       </div>
-
       <input
         className="input-message"
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && sendMessage()} 
         placeholder="Unesite poruku"
       />
       <button className="send-message-button" onClick={sendMessage}>

@@ -8,6 +8,9 @@ import { useState } from "react";
 import CreateGroup from "./components/CreateGroup";
 import UserCard from "./components/UserCard";
 import ChatRoom from "./components/ChatRoom";
+import Breadcrumbs from "./components/Breadcrumbs";
+import WelcomePage from "./components/WelcomePage";
+
 
 function App() {
   const location = useLocation(); 
@@ -38,18 +41,21 @@ function App() {
   
   return (
     <div>
+      
 
-      {(location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/") && <Navbar /> }
-     
+      {(location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/" && location.pathname !== "/welcomePage") && <Navbar /> }
+      {(location.pathname !== "/login" && location.pathname !== "/register" && location.pathname !== "/" && location.pathname !== "/welcomePage") && <Breadcrumbs /> }
       <Routes>
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/welcomePage" element={<WelcomePage />} />
         <Route path="/chatrooms" element={<ChatRooms rooms={rooms} />} />
         <Route path="/create-group" element={<CreateGroup addRoom={addRoom} deleteRoom={deleteRoom} rooms={rooms} />} />
         <Route path="/profile" element={<UserCard />} />
-        <Route path="/chat/:roomId" element={<ChatRoom />} />
+        <Route path="/chatrooms/:roomId" element={<ChatRoom />} />
       </Routes>
+     
     </div>
   );
 

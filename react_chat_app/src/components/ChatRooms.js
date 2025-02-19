@@ -12,7 +12,7 @@ const ChatRooms = ({rooms}) => {
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
-            <Link to={`/chat/${room.id}`} className="chat-room">
+            <Link to={`/chatrooms/${room.id}`} className="chat-room">
               {room.name}
             </Link>
           </li>
