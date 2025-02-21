@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import "../styles/ChatRoom.css";
 import backgroundImage from '../pozadinaa.jpg';
+import useEmojis from './useEmojis';
+import usePagination from './usePagination';
+
 
 
 const ChatRoom = () => {
@@ -14,11 +17,10 @@ const ChatRoom = () => {
   const [newUserName, setNewUserName] = useState(""); 
   const [activeUser, setActiveUser] = useState(null);
   const [showDeleteButton, setShowDeleteButton] = useState(null);
-  const [emojiList, setEmojiList] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     // Paginacija
-    const [currentPage, setCurrentPage] = useState(1); 
+   const [currentPage, setCurrentPage] = useState(1); 
     const [messagesPerPage] = useState(10); 
     const [searchText, setSearchText] = useState("");
 
@@ -51,18 +53,13 @@ const ChatRoom = () => {
     }
   }, [roomId]);
 
-  useEffect(() => {
-    fetch("https://emojihub.yurace.pro/api/all")
-      .then((response) => response.json())
-      .then((data) => setEmojiList(data))
-      .catch((error) => console.error("Error fetching emojis:", error));
-  }, []);
+  const filteredMessages = messages.filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase()));
+
+  // Paginacija
+  const { indexOfLastMessage, indexOfFirstMessage, currentMessages, handleNextPage, handlePreviousPage } = usePagination(filteredMessages, currentPage, messagesPerPage);
+
   
-  const indexOfLastMessage = currentPage * messagesPerPage;
-  const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
-  const currentMessages = messages
-    .filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())) // Filter za pretragu
-    .slice(indexOfFirstMessage, indexOfLastMessage); 
+    const { emojiList, loading } = useEmojis(); 
 
     const addEmojiToMessage = (emoji) => {
       setMessage((prevMessage) => prevMessage + emoji);
@@ -76,12 +73,7 @@ const ChatRoom = () => {
   const handleMouseLeave = () => {
     setShowDeleteButton(null);
   };
-  const handleNextPage = () => {
-    setCurrentPage(prevPage => prevPage + 1);
-  };
-  const handlePreviousPage = () => {
-    setCurrentPage(prevPage => prevPage - 1);
-  };
+  
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
     setCurrentPage(1); // Resetuj stranicu na prvu kada se pretraga menja
@@ -131,6 +123,8 @@ const ChatRoom = () => {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
   };
+
+  
   return (
     <div className="chat-room-container">
       <h2>Chat Grupa: {roomName || 'Loading...'}</h2>
@@ -225,7 +219,11 @@ const ChatRoom = () => {
       </button>
       {showEmojiPicker && (
       <div className="emoji-picker">
-        {emojiList.length > 0 ? (
+        {
+          loading ? (
+            <p>Učitavanje emojija...</p>
+          ):( 
+            emojiList.length > 0 ? (
           emojiList.slice(0, 50).map((emojiData, index) => (
             <span
                key={index}
@@ -236,7 +234,8 @@ const ChatRoom = () => {
             </span>
           ))
         ) : (
-          <p>Učitavanje emojija...</p>
+          <p>Nemamo dostupnih emojija!</p>
+        )
         )}
       </div>
     )}
