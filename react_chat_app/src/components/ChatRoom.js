@@ -14,6 +14,8 @@ const ChatRoom = () => {
   const [newUserName, setNewUserName] = useState(""); 
   const [activeUser, setActiveUser] = useState(null);
   const [showDeleteButton, setShowDeleteButton] = useState(null);
+  const [emojiList, setEmojiList] = useState([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     // Paginacija
     const [currentPage, setCurrentPage] = useState(1); 
@@ -48,12 +50,24 @@ const ChatRoom = () => {
       setActiveUser(savedUsers[0]);
     }
   }, [roomId]);
+
+  useEffect(() => {
+    fetch("https://emojihub.yurace.pro/api/all")
+      .then((response) => response.json())
+      .then((data) => setEmojiList(data))
+      .catch((error) => console.error("Error fetching emojis:", error));
+  }, []);
+  
   const indexOfLastMessage = currentPage * messagesPerPage;
   const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
   const currentMessages = messages
     .filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())) // Filter za pretragu
     .slice(indexOfFirstMessage, indexOfLastMessage); 
 
+    const addEmojiToMessage = (emoji) => {
+      setMessage((prevMessage) => prevMessage + emoji);
+    };
+    
 
   const handleMouseEnter = (index) => {
     setShowDeleteButton(index);
@@ -190,6 +204,7 @@ const ChatRoom = () => {
           Sledeća
         </button>
       </div>
+      <div className='send-message-all'>
       <input
         className="input-message"
         type="text"
@@ -201,9 +216,36 @@ const ChatRoom = () => {
       <button className="send-message-button" onClick={sendMessage}>
         Pošaljite
       </button>
+      <div className="emoji-picker-container">
+      <button
+       className="emoji-button"
+        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+      >
+        😊
+      </button>
+      {showEmojiPicker && (
+      <div className="emoji-picker">
+        {emojiList.length > 0 ? (
+          emojiList.slice(0, 50).map((emojiData, index) => (
+            <span
+               key={index}
+              onClick={() => addEmojiToMessage(emojiData.emoji || String.fromCodePoint(parseInt(emojiData.htmlCode[0].replace('&#', '').replace(';', ''))))}
+              style={{ cursor: "pointer", fontSize: "20px", margin: "5px" }}
+              >
+              {emojiData.emoji || String.fromCodePoint(parseInt(emojiData.htmlCode[0].replace('&#', '').replace(';', '')))}
+            </span>
+          ))
+        ) : (
+          <p>Učitavanje emojija...</p>
+        )}
+      </div>
+    )}
+
     </div>
+    </div>
+  </div>
+    
   );
-  
 };
 
 export default ChatRoom;

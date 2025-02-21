@@ -81,13 +81,13 @@
 }
 
 .input-message {
+  flex-grow: 1;
   width: calc(100% - 100px);
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
-  margin-right: 10px;
-  margin-bottom: 20px;
+  
 }
 
 .send-message-button {
@@ -153,6 +153,35 @@
 .add-user-container{
   font-size: 18px;
 }
+
+.emoji-picker {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 300px;
+  max-height: 200px;
+  overflow-y: scroll;
+  z-index: 100;
+}
+
+.emoji-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+.send-message-all{
+  margin-top: 18px;
+  display: flex;       
+  gap: 10px;          
+  justify-content: center;
+  align-items: center;
+}
+
   
   
   

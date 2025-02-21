@@ -41,8 +41,9 @@ const Breadcrumbs = () => {
         }
 
         return (
+        
           <span key={index}>
-            {' >>> '}
+            {' / '}
             <Link to={pathTo}>{label}</Link>
           </span>
         );
