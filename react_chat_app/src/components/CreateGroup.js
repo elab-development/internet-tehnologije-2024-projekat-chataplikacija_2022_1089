@@ -39,16 +39,16 @@ const CreateGroup = ({addRoom, deleteRoom, rooms}) => {
           type="text"
           value={roomName}
           onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Ime sobe"
+          placeholder="Unesite željeno ime grupe..."
         />
-        <button type="submit">Kreiraj sobu</button>
+        <button type="submit">Kreiraj grupu</button>
       </form>
-      <h3>Postojeće sobe:</h3>
+      <h3>Postojeće grupe:</h3>
       <ul>
         {rooms.map((room) => (
           <li key={room.id}>
             {room.name}  
-            <button onClick={() => handleDelete(room.name)}>Obriši ❌</button>
+            <button onClick={() => handleDelete(room.name)}>Obriši grupu ❌</button>
           </li>
         ))}
       </ul>

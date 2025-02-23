@@ -4,16 +4,17 @@ import "../styles/NavBar.css";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineMarkUnreadChatAlt, MdOutlineGroups, MdLogout } from "react-icons/md";
 
+
 const Navbar = () => {
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     navigate("/login"); 
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" >
       <ul>
         <li>
           <Link to="/chatrooms">

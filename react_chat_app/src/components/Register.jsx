@@ -1,8 +1,16 @@
 import { useState } from "react";
 import "../styles/Register.css";
 import { Link, useNavigate } from 'react-router-dom';
+import backgroundImage from '../pozad.jpg';
 
 const Register = () => {
+  const registerStyle = {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '100vh',  
+  };
 
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -24,7 +32,7 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
+    <div className="register-container" style={registerStyle}>
       <form className="register-form" onSubmit={handleSubmit}>
         <h2>Registracija</h2>
         <input

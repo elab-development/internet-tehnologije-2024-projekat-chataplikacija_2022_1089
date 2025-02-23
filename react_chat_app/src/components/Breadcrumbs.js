@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import "../styles/Breadcrumbs.css";
+
 
 const routeNames = {
   "chatrooms": "Lista chat grupa",
@@ -9,6 +11,7 @@ const routeNames = {
 };
 
 const Breadcrumbs = () => {
+
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter(x => x);
   const [roomName, setRoomName] = useState("");
@@ -29,13 +32,15 @@ const Breadcrumbs = () => {
   }, [pathnames]);
 
   return (
-    <nav className="breadcrumbs">
+    <div >
+    <nav className="breadcrumbs" >
+      <p>Nalazite se u: </p>
       <Link to="/welcomePage">Početna</Link>
       {pathnames.map((value, index) => {
         let label = routeNames[value] || decodeURIComponent(value);
         const pathTo = `/${pathnames.slice(0, index + 1).join('/')}`;
 
-        // Ako je ruta /chatrooms/:id, koristi naziv sobe umesto ID-ja
+        
         if (pathnames[0] === "chatrooms" && index === 1) {
           label = roomName;
         }
@@ -43,12 +48,13 @@ const Breadcrumbs = () => {
         return (
         
           <span key={index}>
-            {' / '}
+            {' >>> '}
             <Link to={pathTo}>{label}</Link>
           </span>
         );
       })}
     </nav>
+    </div>
   );
 };
 

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import "../styles/ChatRoom.css";
-import backgroundImage from '../pozadinaa.jpg';
-import useEmojis from './useEmojis';
-import usePagination from './usePagination';
-
-
+import backgroundImage from '../pozadin.jpg';
+import useEmojis from '../hooks/useEmojis';
+import { useRef } from 'react';
+import { FaSearch } from "react-icons/fa";
+import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { IoSendSharp } from "react-icons/io5";
 
 const ChatRoom = () => {
   const { roomId } = useParams(); // Uzimanje ID sobe iz URL-a
@@ -20,9 +21,32 @@ const ChatRoom = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     // Paginacija
-   const [currentPage, setCurrentPage] = useState(1); 
-    const [messagesPerPage] = useState(10); 
-    const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [messagesPerPage] = useState(10); 
+  const [searchText, setSearchText] = useState("");
+
+  const messagesEndRef = useRef(null);
+  const prevMessagesLengthRef = useRef(0);
+
+  //skrolovanje automatsko da ide za porukama
+  const scrollToBottom = useCallback((force = false) => {
+    if (messagesEndRef.current) {
+      if (force) {
+        // Prisilno skroluj na dno
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Skroluj samo ako je korisnik već bio na dnu ili je dodana nova poruka
+        const chatWindow = document.querySelector('.chat-window');
+        const isScrolledToBottom = 
+          chatWindow.scrollHeight - chatWindow.clientHeight <= chatWindow.scrollTop + 50;
+        
+        if (isScrolledToBottom || messages.length > prevMessagesLengthRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages.length]);
 
   // Učitaj prethodne poruke iz localStorage
   useEffect(() => {
@@ -34,6 +58,9 @@ const ChatRoom = () => {
     }    
     const savedMessages = JSON.parse(localStorage.getItem(roomId)) || [];
     setMessages(savedMessages);
+
+    const totalPages = Math.ceil(savedMessages.length / messagesPerPage);
+    setCurrentPage(totalPages > 0 ? totalPages : 1);
     // Učitavanje imena sobe 
     const rooms = JSON.parse(localStorage.getItem('rooms')) || [];
     const room = rooms.find((room) => room.id === parseInt(roomId)); 
@@ -46,17 +73,27 @@ const ChatRoom = () => {
 
     const savedUsers = JSON.parse(localStorage.getItem(`users_${roomId}`)) || [];
     setUsers(savedUsers);
+    
 
     if (savedUsers.length > 0 && !storedUser) {//ako nema ulogovanog korisnika, postavlja prvog iz liste kao ulogovanog 
       setCurrentUser(savedUsers[0]);
       setActiveUser(savedUsers[0]);
     }
-  }, [roomId]);
+  }, [roomId, messagesPerPage]);
 
-  const filteredMessages = messages.filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase()));
+  // Prisilno skroluj na dno samo kada se učita soba ili promijeni stranica
+  useEffect(() => {
+    scrollToBottom(true);
+  }, [roomId, currentPage, scrollToBottom]);
 
-  // Paginacija
-  const { indexOfLastMessage, indexOfFirstMessage, currentMessages, handleNextPage, handlePreviousPage } = usePagination(filteredMessages, currentPage, messagesPerPage);
+  // Pametno skroluj samo kod dodavanja poruka
+  useEffect(() => {
+    scrollToBottom(false);
+  }, [messages,scrollToBottom]);
+
+  const indexOfLastMessage = currentPage * messagesPerPage;
+  const indexOfFirstMessage = indexOfLastMessage - messagesPerPage;
+  const currentMessages = messages.filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())).slice(indexOfFirstMessage, indexOfLastMessage); // Filter za pretragu.slice(indexOfFirstMessage, indexOfLastMessage); 
 
   
     const { emojiList, loading } = useEmojis(); 
@@ -72,6 +109,12 @@ const ChatRoom = () => {
   
   const handleMouseLeave = () => {
     setShowDeleteButton(null);
+  };
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => prevPage + 1);
+  };
+  const handlePreviousPage = () => {
+    setCurrentPage(prevPage => prevPage - 1);
   };
   
   const handleSearchChange = (e) => {
@@ -93,7 +136,12 @@ const ChatRoom = () => {
 
       // Čuvanje novih poruka u localStorage za odgovarajuću sobu
       localStorage.setItem(roomId, JSON.stringify(newMessages));
+      // Automatski prebaci na posljednju stranicu
+      const totalPages = Math.ceil(newMessages.length / messagesPerPage);
+      setCurrentPage(totalPages);
+
       setMessage(''); 
+      setShowEmojiPicker(false);
     }
   };
 
@@ -110,7 +158,7 @@ const ChatRoom = () => {
     updatedMessages.splice(index, 1);  // Uklanja poruku na datom indeksu
     setMessages(updatedMessages);
     
-    // Čuvanje ažuriranih poruka u localStorage
+    
     localStorage.setItem(roomId, JSON.stringify(updatedMessages));
   };
 
@@ -124,10 +172,11 @@ const ChatRoom = () => {
     backgroundRepeat: 'no-repeat',
   };
 
-  
+
   return (
     <div className="chat-room-container">
       <h2>Chat Grupa: {roomName || 'Loading...'}</h2>
+      <p>Dodavanje novog korisnika u grupu</p>
 
       <div className="add-user-container">
         <input
@@ -139,27 +188,31 @@ const ChatRoom = () => {
           placeholder="Unesite ime korisnika"
         />
         
-        <button className='add-user-button' onClick={addUser}>Dodaj korisnika</button>
+        <button className='add-user-button' onClick={addUser}>Dodaj korisnika<MdOutlinePersonAddAlt size={26} /></button>
       </div>
+      <p>Pretraživanje poruka: </p>
       <div className="search-container">
         <input
           type="text"
           value={searchText}
           onChange={handleSearchChange}
-          placeholder="Pretraži poruke..."
+          placeholder="Unesite poruku..."
         />
+        <button className='search-button' onClick={addUser}><FaSearch size={15} /></button>
       </div>
 
       <div className="user-switch-container">
-        <span>Trenutno piše kao: <strong>{activeUser}</strong></span>
+        <p>Trenutno piše kao: <strong>{activeUser}</strong></p>
+        <div className='menjanje'>
         <button className="current-user-button" onClick={() => switchUser(currentUser)}>
-          {currentUser}
+          Piši kao {currentUser}
         </button>
         {users.map((user, index) => (
           <button key={index} onClick={() => switchUser(user)}>
             Prebaci na {user}
           </button>
         ))}
+        </div>
       </div>
 
 
@@ -183,19 +236,22 @@ const ChatRoom = () => {
             )}
             </div>
       ))}
+      <div ref={messagesEndRef} />
       </div>
       <div className="pagination-controls">
         <button
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
         >
-          Prethodna
+          👈Prethodna
         </button>
         <button
           onClick={handleNextPage}
-          disabled={indexOfLastMessage >= messages.filter(msg => msg.content.toLowerCase().includes(searchText.toLowerCase())).length}
+          disabled={indexOfLastMessage >= messages.filter(msg => 
+            msg.content.toLowerCase().includes(searchText.toLowerCase())
+          ).length}
         >
-          Sledeća
+          Sledeća👉
         </button>
       </div>
       <div className='send-message-all'>
@@ -208,7 +264,7 @@ const ChatRoom = () => {
         placeholder="Unesite poruku"
       />
       <button className="send-message-button" onClick={sendMessage}>
-        Pošaljite
+        Pošaljite <IoSendSharp size={20}/>
       </button>
       <div className="emoji-picker-container">
       <button

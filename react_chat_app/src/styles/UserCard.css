@@ -4,7 +4,7 @@ body {
     background-color: #f4f4f4;
 }
 
-/* Container that holds images and card */
+
 .user-card-container {
     display: flex;
     justify-content: center;
@@ -15,12 +15,13 @@ body {
     margin-left: auto;
     margin-right: auto;
     padding: 0 20px;
+    
 }
 
 .user-card {
     background: linear-gradient(135deg, #ffffff, #f0f0f0);
     border: 1px solid #ddd;
-    padding: 20px;
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
@@ -38,14 +39,14 @@ body {
 .user-card h3 {
     margin: 10px 0;
     color: #333;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
 }
 
 .user-card p {
     margin: 8px 0;
     color: #666;
-    font-size: 18px;
+    font-size: 24px;
 }
 
 .user-card p:last-child {

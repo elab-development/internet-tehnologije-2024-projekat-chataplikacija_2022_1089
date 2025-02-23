@@ -1,9 +1,17 @@
 import { useState } from "react";
 import "../styles/Login.css";
 import { Link, useNavigate } from 'react-router-dom';
+import backgroundImage from '../pozad.jpg';
 
 const Login = () => {
 
+  const LoginStyle = {
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',  
+    };
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -22,7 +30,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={LoginStyle}>
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Prijava</h2>
         <input

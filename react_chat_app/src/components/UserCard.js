@@ -16,7 +16,7 @@ const UserCard = () => {
             <div className="user-card">
                 <h3>Korisnički profil</h3>
                 <p><strong>Ime:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
+                <p><strong>📧Email:</strong> {user.email}</p>
             </div>
             <div className="images-container">
                 <img src="images/avatar-profile-icon2.jpg" alt="Right" className="right-image" />

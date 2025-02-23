@@ -1,50 +1,67 @@
 
-  .chat-rooms {
+.chat-rooms {
     display: flex;
     flex-direction: column; /* Postavlja naslov iznad liste */
     padding: 20px;
+    font-size: 1.2rem;
 }
+.chat-rooms p{
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 5px;
+    margin-top: 3px;
+    color: black;
 
+}
+.chat-rooms li{
+    width: 100%; 
+    margin: 0; 
+    padding: 0; 
+}
 .chat-rooms h2 {
     font-size: 2rem;
-    text-align: left; /* Poravnanje naslova */
-    margin-bottom: 10px;
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 .chat-content {
     display: flex;
-    justify-content: space-between; /* Lista levo, slika desno */
-    align-items: flex-start; /* Poravnanje na vrhu */
+    flex-direction: column; 
+    align-items: center;    /* Horizontalno centriranje */
+    justify-content: flex-start; /* Vertikalno centriranje */
+     gap: 20px;       
+         
 }
 
 .chat-rooms ul {
-    flex: 1; /* Lista chat soba zauzima preostali prostor */
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    list-style: none; 
+    padding: 0; 
+    width: 100%;
+    max-width: 400px; 
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
 }
 
+
 .chat-room {
-    display: block;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #f1f1f1;
-    border-radius: 5px;
+    display: block; 
+    width: 100%; 
+    padding: 15px 0; 
+    margin-bottom: 3px;           
+    background-color: #a7ccf4;
+    border-radius: 10px;
+    outline: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    text-align: center;
     text-decoration: none;
-    color: #333;
+    color: black;
+    transition: all 0.3s ease; 
 }
 
 .chat-room:hover {
-    background-color: #ddd;
+    background-color: rgb(92, 150, 212);
+    transform: translateY(-3px); /* Lebdeći efekat */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); 
 }
 
-.images-container {
-    flex-shrink: 0; /* Sprečava smanjivanje slike */
-    margin-left: 100px; /* Razmak između liste i slike */
-}
-
-.right-image {
-    max-width: 1600px; /* Podesi veličinu slike po potrebi */
-    height: auto;
-    border-radius: 10px;
-}

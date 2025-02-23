@@ -4,12 +4,13 @@
     align-items: center;
     height: 100vh;
     background-color: #f4f4f4;
+    border-radius: 10px;
   }
   
   .login-form {
     background: white;
     padding: 2rem;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -25,27 +26,27 @@
   .login-form input {
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
   }
   
   .login-form button {
-    background: #007bff;
+    background: #3788de;
     color: white;
     padding: 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
   }
   
   .login-form button:hover {
-    background: #0056b3;
+    background: #2d4f74;
   }
   form p {
     margin-top: 20px; 
     text-align: center;
   }
   form a {
-    display: block; /* Prisiljava link da bude blok-level, pa ide ispod */
+    display: block; 
     margin-top: 10px; 
     text-align: center;
   }

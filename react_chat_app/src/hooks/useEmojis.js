@@ -5,12 +5,11 @@ const useEmojis = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Učitavanje liste emojija sa API-ja
     fetch("https://emojihub.yurace.pro/api/all")
       .then((response) => response.json())
       .then((data) => {
         setEmojiList(data);
-        setLoading(false); // Postavljanje loading-a na false nakon što su podaci učitani
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Error fetching emojis:", error);

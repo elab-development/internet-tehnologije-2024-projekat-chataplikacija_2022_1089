@@ -1,0 +1,54 @@
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 3px 20px;
+    background-color: white;
+    border: 2px solid #2d4f74;
+    border-radius: 20px;
+    font-family: Arial, sans-serif;
+    position: relative;
+    margin-top: 10px;
+  }
+  .breadcrumbs p{
+    align-items: center;
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    color: black;
+    
+  }
+  
+  .breadcrumbs a {
+    color: #2d4f74;
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 18px;
+    transition: color 0.2s;
+    font-style: italic;
+  }
+  
+  /* Posljednji link (trenutna stranica) */
+  .breadcrumbs span:last-child a {
+    color: #333;
+    font-weight: normal;
+  }
+  
+  .breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+  
+  
+  .breadcrumbs span {
+    color: #666;
+    font-size: 18px;
+  }
+  
+
+
+  
+  
+  

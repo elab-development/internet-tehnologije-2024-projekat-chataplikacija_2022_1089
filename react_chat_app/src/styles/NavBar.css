@@ -1,35 +1,39 @@
 
 .navbar {
-    background-color: #333;
-    padding: 1rem;
+    background-color: #2d4f74;
+    padding: 1rem 3.5rem;
     color: white;
+    
+    
   }
   
   .navbar ul {
     list-style: none;
     display: flex;
-    justify-content: space-around; /* Razmeštaj stavki u navbaru */
+    justify-content: space-between;
     padding: 0;
+    
   }
   
   .navbar li {
     display: flex;
     align-items: center; 
-    gap: 8px; 
+    
+    
   }
   
   .navbar a, .navbar button {
     color: white;
-    text-decoration: none;
+    text-decoration: none !important;
     display: flex; /* Omogućava postavljanje ikone i teksta u jedan red */
-    align-items: center; 
-    gap: 8px; 
+    gap:8px; 
     padding: 0.5rem 1rem;
     transition: background-color 0.3s, transform 0.3s; 
+    
   }
   
   .navbar a:hover, .navbar button:hover {
-    background-color: #555;
+    background-color:#24415f;
     border-radius: 5px;
     transform: scale(1.05); /* Povećava dugme na hover */
   }
@@ -37,7 +41,7 @@
   .logout-btn {
     display: flex;
     align-items: center;
-    background-color: #ff4d4d;
+    background-color: #1f3751;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -47,7 +51,7 @@
   }
   
   .logout-btn:hover {
-    background-color: #cc0000;
+    background-color: #982e2e  !important;
   }
   
   /* Stilizacija ikona u navbaru */

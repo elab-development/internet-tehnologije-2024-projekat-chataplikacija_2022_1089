@@ -5,9 +5,9 @@
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #f9f9f9;
+  background-color: rgb(236, 236, 236);
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.2);
 }
 
 .chat-room-container h2 {
@@ -22,7 +22,6 @@
   overflow-y: scroll;
   margin-bottom: 20px;
   padding: 15px;
-  /*background-color: #fff;*/
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -41,9 +40,9 @@
 
 }
 
-/* Poruke ulogovanog korisnika - DESNA STRANA */
+
 .my-message {
-  background-color: #007bff;
+  background-color: #365d87;
   color: white;
   text-align: right;
   align-self: flex-end;
@@ -51,51 +50,61 @@
   padding: 10px;
 }
 
-/* Poruke drugih korisnika - LEVA STRANA */
+
 .other-message {
-  background-color: #a03bda;
+  background-color: rgb(185, 71, 118);
   color: white;
   text-align: left;
   align-self: flex-start;
   border-radius: 10px 10px 10px 0;
   padding: 10px;
 }
+.menjanje button{
+  background-color: rgb(185, 71, 118);
+  color: white;
+  font-size: 15px;
+}
 
 .user-switch-container {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .user-switch-container button {
   margin: 5px;
   padding: 8px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  background-color: #a03bda;
+  background-color: rgb(185, 71, 118);
   color: white;
   transition: background-color 0.3s ease;
+  
 }
 
 .user-switch-container button:hover {
-  background-color: #8431b4;
+  background-color: rgb(184, 33, 96);
 }
 
 .input-message {
   flex-grow: 1;
   width: calc(100% - 100px);
-  padding: 10px;
+  padding: 5px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 16px;
+  margin: 5px;
   
 }
 
 .send-message-button {
+  display: flex;
+  gap:8px;
+  text-align: center;
   background-color: rgb(184, 33, 96);
   color: white;
   border: none;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
@@ -104,17 +113,57 @@
 .send-message-button:hover {
   background-color: rgb(148, 27, 77);
 }
+.add-user-container{
+  font-size: 18px;
+  display: flex;
+}
 .add-user-button{
+  display:flex;
+  text-align: center;
+  
+  justify-content: space-between;
   border: none;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
+  background-color: rgb(184, 33, 96);
+  padding: 5px;
+  color: white;
+}
+.add-user-button:hover{
+  background-color: rgb(130, 24, 68);
+}
+.search-container{
+  display: flex;
+  margin-top: 5px;
+}
+.search-container input{
+  margin-top: 5px;
+  padding: 5px;
+  margin-left: 3px;
+  font-size: 17px;
+  border-radius: 10px;
+}
+.search-button{
+  border: none;
+  padding: 10px 20px !important;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  background-color: rgb(184, 33, 96);
+  padding: 5px;
+  margin-left: 5px;
+  color: white;
+}
+.search-button:hover{
+  background-color: rgb(155, 28, 81);
 }
 
 .current-user-button {
-  background-color: #007bff !important; 
+  background-color: #365d87 !important; 
   color: white !important;
   border: none !important;
   padding: 10px 20px;
@@ -125,10 +174,10 @@
 }
 
 .current-user-button:hover {
-  background-color: #0061c9!important; /* Tamnija ljubičasta kad se pređe mišem */
+  background-color: #1f3852!important; 
 }
 .delete-button {
-  background-color: rgb(184, 33, 96);
+  background-color: rgb(0, 0, 0);
   color: white;
   border: none;
   border-radius: 10%;
@@ -136,23 +185,13 @@
   cursor: pointer;
   font-size: 10px;
   position: absolute;
-  
   display: none; /* Sakrij dugme dok ne pređete mišem */
 }
 
 .message:hover .delete-button {
-  display: block; /* Prikazivanje dugmeta kada pređete mišem preko poruke */
+  display: block; /* Prikazivanje dugmeta kada se predje mišem preko poruke */
 }
 
-.add-user-button{
-  background-color: rgb(184, 33, 96);
-}
-.add-user-button:hover{
-  background-color: rgb(155, 28, 81);
-}
-.add-user-container{
-  font-size: 18px;
-}
 
 .emoji-picker {
   position: absolute;
@@ -181,7 +220,26 @@
   justify-content: center;
   align-items: center;
 }
+.send-message-all input{
+  flex-grow: 1;
+  width: calc(100% - 100px);
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 16px;
+  margin: 5px;
+}
 
-  
+.chat-room-container p{
+  margin: 10px;
+}
+.pagination-controls button{
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  background-color: rgb(206, 205, 205);
+}
   
   

@@ -24,17 +24,17 @@
   }
   
   .enter-button {
-    background: #667eea;
+    background: #2571c2;
     color: white;
     border: none;
     padding: 10px 20px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     transition: 0.3s;
   }
   
   .enter-button:hover {
-    background: #5644b1;
+    background: #1a5492;
   }
   

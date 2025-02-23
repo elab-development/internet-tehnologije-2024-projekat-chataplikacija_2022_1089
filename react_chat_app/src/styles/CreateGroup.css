@@ -1,51 +1,66 @@
-.create-group {
-    padding: 2rem;
-    text-align: center;
+  .create-group {
+     padding: 2px;
+     text-align: center;
+     font-size: 1.3rem;
+    }
+  .create-group h2{
+     margin-top: 2px ;
   }
   
   .create-group input {
-    padding: 0.5rem;
+    padding: 10px 60px;
     margin-right: 1rem;
+    border-radius: 15px;
+    font-size: 1rem;
   }
   
   .create-group button {
     padding: 0.5rem 1rem;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: rgb(184, 33, 96);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 15px;
+    margin-right: 55px;
   }
   
   .create-group button:hover {
-    background-color: #b0311b;
+    background-color: rgb(154, 32, 82);
   }
-  button {
-    margin-left: 5px;
-    padding: 5px 10px;
-    background-color: rgb(86, 79, 186);
+  .create-group button {
+    margin-right: 5px;
+    padding: 12px 20px;
+    background-color: rgb(154, 32, 82);
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    
+    font-size: 1.1rem;
   }
   
-  button:hover {
-    background-color: rgb(32, 92, 183);
+  .create-group button:hover {
+    background-color: rgb(117, 26, 64);
   }
   
-  ul {
+  .create-group ul {
     list-style: none;
-    padding: 0;
+    padding: 0px 40px;
+    margin: 5px 350px 5px 300px;
+    
   }
   
-  li {
-    margin: 5px 0;
+  .create-group li {
+    margin:  5px 25px; 
     display: flex;
     justify-content: space-between;
+    gap: 20px;
     align-items: center;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 5px;
-  }
+    width: 100%;
+    padding: 0px 0px;
+    border-bottom:1px dashed rgb(0, 0, 0) ;
 
+  }
+  .create-group h3{
+    font-size: 2rem;
+  }
   
