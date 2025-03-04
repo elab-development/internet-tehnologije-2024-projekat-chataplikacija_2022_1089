@@ -1,0 +1,228 @@
+
+* {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  .welcome-container {
+   /* background: linear-gradient(135deg, #5e3d7a 0%, #cf6da0 100%);*/
+    
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    
+  }
+  
+  
+  .login-container {
+    background-color: #fff;
+    width: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(78, 78, 193, 0.817), 0 5px 15px rgba(0, 0, 0, 0.07);
+    z-index: 1;
+    
+  }
+  
+  
+  
+
+  
+  .login-form {
+    padding: 30px;
+  }
+  
+  .login-form h1 {
+    text-align: center;
+    margin-bottom: 15px;
+    
+    color: #333;
+    font-weight: 700;
+    font-size: 24px;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .input-group input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: #010101;
+  }
+  
+  .input-group input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px 15px 15px 25px;
+    border: none;
+    background-color: #acbfe5ba;
+    border-radius: 10px;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  .input-group input::placeholder {
+    color: #00000077;
+  }
+  
+  .input-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #e69daf;
+  }
+  
+  .forgot-password {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .forgot-password a {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .forgot-password a:hover {
+    color: #7227b0;
+    text-decoration: underline;
+  }
+  
+  .login-button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 30px;
+    background-color: #3e4e9c;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .login-button:hover {
+    background-color: #7b4397;
+  }
+  
+  .account-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .create-account, .guest-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .create-account {
+    background-color: transparent;
+    color: #5e3d7a;
+    border: 1px solid #5e3d7a;
+    border-radius: 30px;
+  }
+  
+  .create-account:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .guest-button {
+    background-color: #f0f0f0;
+    color: #5e3d7a;
+    border-radius: 30px;
+  }
+  
+  .guest-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .guest-modal {
+    background-color: white;
+    width: 400px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .guest-modal h2 {
+    margin-bottom: 10px;
+    color: #5e3d7a;
+  }
+  
+  .guest-modal p {
+    margin-bottom: 20px;
+    color: #666;
+  }
+  
+  
+  
+  .modal-buttons {
+    display: flex;
+    justify-content:flex-end;
+    gap: 10px;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .modal-buttons button:first-child {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .modal-buttons button:last-child {
+    background-color: #5e3d7a;
+    color: white;
+  }
+  
+  .modal-buttons button:hover {
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 480px) {
+    .login-container {
+      width: 90%;
+    }
+    
+    .guest-modal {
+      width: 90%;
+    }
+  }

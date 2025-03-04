@@ -1,0 +1,118 @@
+
+* {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  .welcome-container {
+   /* background: linear-gradient(135deg, #5e3d7a 0%, #cf6da0 100%);*/
+    
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    
+  }
+  
+  
+  .register-container {
+    background-color: #fff;
+    width: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(78, 78, 193, 0.616), 0 5px 15px rgba(0, 0, 0, 0.07);
+    z-index: 1;
+    
+  }
+  
+  .register-form {
+    padding: 30px;
+  }
+  
+  .register-form h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 22px;
+    color: #333;
+    font-weight: 700;
+    font-size: 24px;
+  }
+  
+  .input-group-register {
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+ 
+  
+  .input-group-register input {
+    width: 100%;
+    margin-top: 12px;
+    padding: 15px 15px 15px 25px;
+    border: none;
+    background-color: #bccef3ba;
+    border-radius: 10px;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  .input-group-register input::placeholder {
+    color: #00000077;
+  }
+  
+  .input-group-register input:focus {
+    outline: #000000;
+    box-shadow: 0 0 0 2px #e69daf;
+  }
+
+  .register-button {
+    width: 100%;
+    
+    padding: 15px;
+    border: none;
+    border-radius: 30px;
+    background-color: #3e4e9c;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .register-button:hover {
+    background-color: #7b4397;
+  }
+  
+  .account-options-register {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .back_to_login{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+     background-color: transparent;
+    color: #5e3d7a;
+    border: 1px solid #5e3d7a;
+  }
+  
+  
+  
+  .back_to_login:hover {
+    background-color: #f0f0f0;
+  }
+  
+  
