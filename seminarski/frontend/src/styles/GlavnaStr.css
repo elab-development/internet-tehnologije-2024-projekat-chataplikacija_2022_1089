@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    height: 100vh; /* Puna visina ekrana */
+    background-color: #dbd8e5;
+  }
+  
+  .left-panel {
+    width: 320px;  /* Fiksna širina levog panela */
+    background-color: #f8f6ff !important;
+    border-right: 2px solid #dbd8e5;
+    padding: 20px;
+    position: fixed;
+    left: 2px;
+    top: 2px;
+    bottom: 2px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+  
+  .right-panel {
+    width: 300px; 
+    background-color: #f8f6ff !important;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    right: 0;
+    top: 2px;
+    bottom: 2px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-left: 2px solid #dbd8e5;
+  }
+  
+  .main-content {
+    flex: auto; /* Zauzima sav preostali prostor između panela */
+    margin-left: 320px !important; 
+    margin-right: 300px !important; 
+    background-color: #f8f6ff;
+    padding: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-top:2px !important;
+    margin-bottom: 2px;
+  }
+  

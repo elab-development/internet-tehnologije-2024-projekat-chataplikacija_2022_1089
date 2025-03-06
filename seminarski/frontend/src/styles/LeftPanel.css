@@ -1,0 +1,127 @@
+/* LeftPanel.css */
+.groups-panel {
+  width: 280px;
+  height: 100vh;
+  background-color: #f8f6ff;
+  display: flex;
+  flex-direction: column;
+  
+  font-family: 'Inter', sans-serif;
+}
+
+.groups-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px;
+  border-bottom: 1px solid #e0dcf5;
+  margin-bottom: 10px;
+}
+
+.groups-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2f2f2f;
+  margin: 0;
+}
+
+.add-button {
+  background-color: #456db4 !important;
+  color: white !important;
+  font-size: 12px !important;
+  text-transform: none !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  min-width: auto !important;
+  box-shadow: none !important;
+}
+
+.groups_card {
+  padding: 12px 0;
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px !important;
+}
+
+.list_header {
+  display: block;
+  padding: 0 16px 8px;
+  font-size: 12px;
+  color: #8a8a9e;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #e0dcf5;
+}
+
+.groups-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-item {
+  display: flex;
+  align-items: center;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 0;
+  border-bottom: 1px solid #e0dcf5;
+  
+}
+
+.group-item:hover {
+  background-color: #eeebf7;
+}
+
+.group-item.active {
+  background-color: #e9e5ff;
+}
+
+.group-icon {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.group.list group-details {
+  flex: 1;
+  overflow: hidden;
+  margin-left: 10px !important;
+}
+.group-details{
+  margin-left: 10px !important;
+}
+.group-details h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2f2f2f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.group-details p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #8a8a9e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+
+/* Stil za dialog */
+:global(.MuiDialog-paper) {
+  border-radius: 12px !important;
+}

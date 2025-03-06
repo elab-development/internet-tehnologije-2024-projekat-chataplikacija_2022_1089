@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Group extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'is_private'];
+    protected $fillable = ['name', 'is_private', 'description'];
 
     public function messages(): HasMany
     {
