@@ -6,7 +6,7 @@ import CreateGroupDialog from './CreateGroupDialog';
     
     
 
-    const LeftPanel = () => {
+    const LeftPanel = ({ onGroupSelect }) => {
       // eslint-disable-next-line no-unused-vars
       const [groupData, setGroupData] = useState({
           name: "",
@@ -21,16 +21,27 @@ import CreateGroupDialog from './CreateGroupDialog';
       
         const handleCloseDialog = () => {
           setOpenDialog(false);
+          setError({});
         };
         // eslint-disable-next-line no-unused-vars
         const [error, setError] = useState({});
         const [groups, setGroups] = useState([]);
         const [activeGroup, setActiveGroup] = useState(null);
 
+       
+
+
         const handleAddGroup = async  (formData) => {
+
+          const groupExists = groups.some(group => group.name.toLowerCase() === formData.name.toLowerCase());
+
+          if (groupExists) {
+              setError({ name: 'Grupa sa tim imenom već postoji!' });
+              return; 
+          }
             
             try {
-
+              
               const response = await axios.post('api/add-group', {
                   name: formData.name,
                   description: formData.description,
@@ -47,6 +58,7 @@ import CreateGroupDialog from './CreateGroupDialog';
                 description: '',
                 is_private: 1
                });
+               setError({});
 
                handleCloseDialog();
 
@@ -73,9 +85,10 @@ import CreateGroupDialog from './CreateGroupDialog';
             }
           };
 
-          const handleGroupClick = (groupId) => {
-            setActiveGroup(groupId);
-          };
+        const handleGroupClick = (groupId) => {
+          setActiveGroup(groupId);
+          onGroupSelect(groupId);
+        };
         useEffect(() => { allGroups();}, []); 
     
       return (
@@ -91,17 +104,15 @@ import CreateGroupDialog from './CreateGroupDialog';
               size='small'
               >
               Dodaj novu grupu
-        </Button>
+              </Button>
 
         <CreateGroupDialog
           open={openDialog}
           onClose={handleCloseDialog}
           onSubmit={handleAddGroup}
+          error={error}
         />
 
-
-          
-          
           <div className="groups_card">
             <span className="list_header">Moje grupe</span>
             <div className="groups-list">

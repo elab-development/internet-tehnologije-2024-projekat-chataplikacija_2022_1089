@@ -46,7 +46,7 @@ const Register = () => {
         });
 
         console.log('Registracija uspešna:', response.data);
-        navigate("/chat_interface");
+        navigate("/l");
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.log('Validation Errors:', error.response.data.errors);

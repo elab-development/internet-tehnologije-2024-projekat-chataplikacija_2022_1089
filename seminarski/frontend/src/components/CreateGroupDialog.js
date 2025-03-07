@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, 
     Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
-    const CreateGroupDialog = ({ open, onClose, onSubmit }) => {
+    const CreateGroupDialog = ({ open, onClose, onSubmit, error }) => {
         const [groupData, setGroupData] = useState({
           name: "",
           description: "",
@@ -27,13 +27,7 @@ import { Select, MenuItem, FormControl, InputLabel,
         const handleSubmit = () => {
            
             onSubmit(groupData);
-          // Resetovanje forme
-          setGroupData({
-            name: "",
-            description: "",
-            is_private: 1
-          });
-          onClose();
+          
         };
       
         return (
@@ -48,6 +42,8 @@ import { Select, MenuItem, FormControl, InputLabel,
                 type="text"
                 fullWidth
                 variant="outlined"
+                error={!!error.name} // Postavi crvenu ivicu ako postoji greška
+                helperText={error.name} 
                 value={groupData.name}
                 onChange={handleInput}
                 required
@@ -64,6 +60,7 @@ import { Select, MenuItem, FormControl, InputLabel,
                 onChange={handleInput}
                 sx={{ mb: 2 }}
               />
+              {error.general && <p style={{ color: 'red' }}>{error.general}</p>}
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel id="privacy-select-label">Privatnost grupe</InputLabel>
                 <Select

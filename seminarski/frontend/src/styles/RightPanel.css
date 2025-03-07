@@ -1,0 +1,79 @@
+/*RightPanel*/
+
+
+.right-groups-panel{
+  width: 280px;
+  height: 100vh;
+  background-color: #f8f6ff;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+}
+
+.header-right-panel{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 12px;
+  border-bottom: 1px solid #e0dcf5;
+  margin-bottom: 10px;
+}
+.users-header{
+    padding: 16px 12px 16px 12px;
+    border-bottom: 1px solid #e0dcf5;
+    border-top: 1px solid #e0dcf5;
+}
+
+
+.logout-button{
+    background-color: #456db4 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  min-width: auto !important;
+}
+
+.logged-user-card {
+    background: linear-gradient(120deg, #e2e8f3, #e9e3ff);
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    width: auto;
+    flex-shrink: 0;
+    margin-bottom: 12px;
+    
+}
+
+.logged-user-card:hover {
+    transform: scale(1.05);
+    background-color: #f5c8a0;
+    box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.2);
+}
+.user-info{
+    flex: 1;
+}
+
+.user-info h3 {
+    color: #333;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.user-info p {
+    color: #666;
+    font-size: 16px;
+}
+
+.logged-user-card p:last-child {
+    font-style: italic;
+    color: #888;
+}
+
+.add-user-button{
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+}

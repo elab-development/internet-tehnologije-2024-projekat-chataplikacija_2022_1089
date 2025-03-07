@@ -5,7 +5,7 @@
   }
   
   .left-panel {
-    width: 320px;  /* Fiksna širina levog panela */
+    width: 320px; 
     background-color: #f8f6ff !important;
     border-right: 2px solid #dbd8e5;
     padding: 20px;
@@ -18,9 +18,9 @@
   }
   
   .right-panel {
-    width: 300px; 
+    width: 320px; 
     background-color: #f8f6ff !important;
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 20px;
     position: fixed;
     right: 0;
@@ -34,7 +34,7 @@
   .main-content {
     flex: auto; /* Zauzima sav preostali prostor između panela */
     margin-left: 320px !important; 
-    margin-right: 300px !important; 
+    margin-right: 320px !important; 
     background-color: #f8f6ff;
     padding: 20px;
     border-top-right-radius: 20px;

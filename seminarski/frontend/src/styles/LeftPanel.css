@@ -29,11 +29,11 @@
   background-color: #456db4 !important;
   color: white !important;
   font-size: 12px !important;
-  text-transform: none !important;
+  text-transform: none ;
   border-radius: 8px !important;
   padding: 6px 12px !important;
   min-width: auto !important;
-  box-shadow: none !important;
+  
 }
 
 .groups_card {

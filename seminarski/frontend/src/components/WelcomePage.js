@@ -35,14 +35,14 @@ const WelcomePage = () => {
     e.preventDefault();
     
     try {
-      // Slanje zahteva za login
+      // Slanje zahteva 
       const response = await axios.post('api/login', {
         email: loginData.email,
         password: loginData.password
       });
 
       
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token_ulogovanog', response.data.token);
       localStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));// Čuvanje tokena i korisničkih podataka u lokalnom skladištu
 
       // Postavljanje default-nog Authorization hedera za buduće zahteve
@@ -50,7 +50,7 @@ const WelcomePage = () => {
       console.log("uspesno je ulogovan", response.data
       )
       
-      navigate('/chat_interface');
+      navigate('/glavna');
     } catch (error) {
       
       if (error.response) {
