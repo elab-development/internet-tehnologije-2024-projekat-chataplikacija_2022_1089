@@ -14,10 +14,10 @@ class UserController extends Controller
 
     //Dohvata listu svih korisnika.
 
-    public function index(Request $request): JsonResponse
+    public function getAllUsers()
     {
-        $query = User::query();
-        return response()->json($query);
+        $users = User::all(['id', 'username', 'email', 'role']);
+        return response()->json(['users' => $users]);
     }
 
     public function getUsersByGroupId($groupId)

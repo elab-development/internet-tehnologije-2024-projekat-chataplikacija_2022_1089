@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class GroupsController extends Controller
@@ -49,17 +50,53 @@ class GroupsController extends Controller
         ]);
     }
 
-    /*
-    public function destroyByName($name)
+    public function getUsersByGroupId($groupId)
     {
-        $chatRoom = Group::where('name', $name)->first();
+        $users = DB::table('users')
+            ->join('group_user', 'users.id', '=', 'group_user.user_id')
+            ->where('group_user.group_id', $groupId)
+            ->select('users.*')
+            ->get();
 
-        if (!$chatRoom) {
-            return response()->json(['message' => 'Chat room not found'], 404);
-        }
-
-        $chatRoom->delete();
-        return response()->json(['message' => 'Chat room deleted successfully'], 200);
+        return response()->json(['users' => $users]);
     }
-        */
+
+    public function updateGroupUsers(Request $request, $groupId)
+    {
+        $group = Group::findOrFail($groupId);
+
+        // uklanjanje svih postojećih veze i dodaje nove
+        $group->users()->sync($request->user_ids);
+
+        return response()->json(['message' => 'Korisnici grupe uspešno ažurirani']);
+    }
+
+    public function addUsersToGroup(Request $request, $groupId)
+    {
+
+        $validated = $request->validate([
+            'user_ids' => 'required|array',
+        ]);
+
+        try {
+            $group = Group::findOrFail($groupId);
+
+            // dohvatanje korisnika bez dupliranja
+            $group->users()->syncWithoutDetaching($validated['user_ids']);
+
+            // Koristimo direktan upit za dohvatanje korisnika
+            return response()->json([
+                'message' => 'Korisnici uspešno dodati u grupu',
+                'users' => DB::table('users')
+                    ->join('group_user', 'users.id', '=', 'group_user.user_id')
+                    ->where('group_user.group_id', $groupId)
+                    ->select('users.id', 'users.username', 'users.email', 'users.role')
+                    ->get()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Došlo je do greške prilikom obrade zahteva'
+            ], 500);
+        }
+    }
 }

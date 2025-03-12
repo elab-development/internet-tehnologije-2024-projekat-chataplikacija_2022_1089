@@ -6,20 +6,25 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import '../styles/RightPanel.css';
 import logo from '../user.png'
 import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
+import MultipleSelectUsers from './MultipleSelectUsers';
 
 const RightPanel = ({ selectedGroupId }) => {
     
     const [groupUsers, setGroupUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedUserIds, setSelectedUserIds] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
       if (selectedGroupId) {
-        //fetchGroupUsers(selectedGroupId);
+        fetchGroupUsers(selectedGroupId);
         console.log(selectedGroupId)
       } else {
         setGroupUsers([]);
       }
     }, [selectedGroupId]);
+
+    
     
     const fetchGroupUsers = async (groupId) => {
       setLoading(true);
@@ -31,6 +36,12 @@ const RightPanel = ({ selectedGroupId }) => {
       } finally {
         setLoading(false);
       }
+    };
+
+    const handleUserSelect = (selectedUserIds) => {
+      
+      //cuva odabrane id-jeve
+      setSelectedUserIds(selectedUserIds);
     };
     
 
@@ -65,8 +76,29 @@ const RightPanel = ({ selectedGroupId }) => {
           
     }
     const handleAddUserInGroup = async(e)=>{
-            e.preventDifolt();
-            //imam grupu, njen id
+            e.preventDefault();
+            if (!selectedGroupId || selectedUserIds.length === 0) {
+              console.log("Nije odabrana grupa ili nisu odabrani korisnici");
+              return;
+            }
+            
+            try {
+            
+              await axios.post(`/api/groups/${selectedGroupId}/usersadd`, {
+                user_ids: selectedUserIds
+              });
+              
+              // Nakon uspešnog dodavanja, osvežavanje listu korisnika u grupi
+              fetchGroupUsers(selectedGroupId);
+
+              setSelectedUserIds([]);
+              setRefreshTrigger(prev => prev + 1);
+              
+            } catch (error) {
+              
+              console.error("Greška pri dodavanju korisnika u grupu:", error);
+              alert("Došlo je do greške prilikom dodavanja korisnika u grupu(handle add group).");
+            }
 
     }
 
@@ -97,38 +129,52 @@ const RightPanel = ({ selectedGroupId }) => {
             </div>
             <div className='users-container'>
             <div className='users-header'>
-              <h2>Korisnici grupe {selectedGroupId}</h2>
-            </div>
-              <Button 
-                className='add-user-button'
-                variant="contained" 
-                onClick={handleAddUserInGroup}
-                size='small'
-               >
-               Dodajte novog korisnika<PersonAddAltRoundedIcon/>
-               </Button>
-                <div className="users-list">
-                  {groupUsers.length > 0 ? (
-                    groupUsers.map(user => (
-                      <div key={user.id} className="user-item">
-                        <div 
-                          className="user-avatar"
-                          style={{
-                            backgroundColor: `hsl(${Math.random() * 360}, 70%, 60%)`,
-                          }}
-                        >
-                          {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="user-details">
-                          <h4>{user.name}</h4>
-                          <p>{user.email}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>Nema korisnika u ovoj grupi ili nijedna grupa nije odabrana</p>
-                  )}
+            <h2>Korisnici grupe {selectedGroupId}</h2>
                 </div>
+                  
+                {selectedGroupId ? (
+                  <>
+                    <div className="user-controls-container">
+                      <div style={{flex:1}}>
+                      <MultipleSelectUsers
+                        selectedGroupId={selectedGroupId}
+                        onUserSelect={handleUserSelect}
+                        selectedUserIds={selectedUserIds}
+                        refreshTrigger={refreshTrigger}
+                      />
+                      </div>
+                      <Button
+                        className='add-user-button'
+                        variant="contained"
+                        onClick={handleAddUserInGroup}
+                        size='small'
+                      >
+                        <PersonAddAltRoundedIcon/>
+                      </Button>
+                    </div>
+                    
+                    {loading ? (
+                      <div>Učitavanje korisnika...</div>
+                    ) : (
+                      <div className="users-list">
+                        {groupUsers.length > 0 ? (
+                          groupUsers.map(user => (
+                            <div key={user.id} className="user-item">
+                              <div className="user-details">
+                                <h4>{user.username}</h4>
+                                <p>{user.email}</p>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p>Nema korisnika u ovoj grupi ili nijedna grupa nije odabrana</p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p>Izaberite grupu da biste videli i upravljali korisnicima</p>
+                )}
               </div>
 
                     
