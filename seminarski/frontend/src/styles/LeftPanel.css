@@ -125,3 +125,27 @@
 :global(.MuiDialog-paper) {
   border-radius: 12px !important;
 }
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  padding: 5px;
+  gap: 5px;
+}
+
+.pagination-button {
+  min-width: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  
+}
+
+
+.page-indicator {
+  font-size: 14px;
+  color: #555;
+  margin: 0 10px;
+}

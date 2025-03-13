@@ -3,10 +3,13 @@ import { useNavigate  } from 'react-router-dom';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import '../styles/RightPanel.css';
 import logo from '../user.png'
 import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import MultipleSelectUsers from './MultipleSelectUsers';
+import { FaRegUserCircle } from "react-icons/fa";
+
 
 const RightPanel = ({ selectedGroupId }) => {
     
@@ -47,6 +50,24 @@ const RightPanel = ({ selectedGroupId }) => {
 
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("ulogovani_user"));
+    
+    const [groupName, setGroupName] = useState("");
+    
+    useEffect(() => {
+    const fetchGroupName = async () => {
+          try {
+              const response = await axios.get('/api/groups'); 
+              const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
+              setGroupName(foundGroup?.name || "(Izaberite grupu)");
+          } catch (error) {
+              console.error("Greška pri dohvatanju imena grupe:", error);
+              setGroupName("(Izaberite grupu)");
+            }
+          };
+
+
+       fetchGroupName();
+    }, [selectedGroupId]);
 
     const handleLogout = async(e)=>{
         
@@ -75,6 +96,12 @@ const RightPanel = ({ selectedGroupId }) => {
           }
           
     }
+    const handleStatistic=(e) =>{
+
+      //statistikkaa
+      e.preventDefault();
+    }
+
     const handleAddUserInGroup = async(e)=>{
             e.preventDefault();
             if (!selectedGroupId || selectedUserIds.length === 0) {
@@ -102,86 +129,100 @@ const RightPanel = ({ selectedGroupId }) => {
 
     }
 
-
+    
   return (
     <div className='right-panel'>
-        <div className='right-groups-panel'>
-            <div className='header-right-panel'>
-            <Button 
-                className='logout-button'
-                variant="contained" 
-                onClick={handleLogout}
-                size='small'
-            >
+    <div className='right-groups-panel'>
+      {/* Fiksni sadržaj koji se uvek prikazuje */}
+      <div className='right-panel-fixed-content'>
+        <div className='header-right-panel'>
+        <Button
+            className='statistic-button'
+            variant="contained"
+            onClick={handleStatistic}
+            size='small'
+          >
+            <AssessmentIcon />
+          </Button>
+        
+          <Button
+            className='logout-button'
+            variant="contained"
+            onClick={handleLogout}
+            size='small'
+          >
             <ExitToAppIcon/>
-            </Button>
-            </div>
-            <div className='logged-user-card'>
-                <div className='user-info'>
-                    <h3>Korisnički profil</h3>
-                    <p><strong>Ime:</strong> {user.username}</p>
-                    <p><strong>📧Email:</strong> {user.email}</p>
-                </div>  
-                <div className='user-img'>
-                <img src={logo} alt="User Logo" style={{ width: "70px", height: "70px",
-                   borderRadius: "40px", objectFit: "cover", marginLeft: "5px" }} />
-                </div>
-            </div>
-            <div className='users-container'>
-            <div className='users-header'>
-            <h2>Korisnici grupe {selectedGroupId}</h2>
-                </div>
-                  
-                {selectedGroupId ? (
-                  <>
-                    <div className="user-controls-container">
-                      <div style={{flex:1}}>
-                      <MultipleSelectUsers
-                        selectedGroupId={selectedGroupId}
-                        onUserSelect={handleUserSelect}
-                        selectedUserIds={selectedUserIds}
-                        refreshTrigger={refreshTrigger}
-                      />
-                      </div>
-                      <Button
-                        className='add-user-button'
-                        variant="contained"
-                        onClick={handleAddUserInGroup}
-                        size='small'
-                      >
-                        <PersonAddAltRoundedIcon/>
-                      </Button>
-                    </div>
-                    
-                    {loading ? (
-                      <div>Učitavanje korisnika...</div>
-                    ) : (
-                      <div className="users-list">
-                        {groupUsers.length > 0 ? (
-                          groupUsers.map(user => (
-                            <div key={user.id} className="user-item">
-                              <div className="user-details">
-                                <h4>{user.username}</h4>
-                                <p>{user.email}</p>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <p>Nema korisnika u ovoj grupi ili nijedna grupa nije odabrana</p>
-                        )}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p>Izaberite grupu da biste videli i upravljali korisnicima</p>
-                )}
-              </div>
-
-                    
-
+          </Button>
         </div>
+        
+        <div className='logged-user-card'>
+          <div className='user-info'>
+            <h3>Korisnički profil</h3>
+            <p><strong>Ime:</strong> {user.username}</p>
+            <p><strong>📧Email:</strong> {user.email}</p>
+          </div>
+          <div className='user-img'>
+            <img src={logo} alt="User Logo" style={{ width: "70px", height: "70px", 
+              borderRadius: "40px", objectFit: "cover", marginLeft: "5px" }} />
+          </div>
+        </div>
+        
+        <div className='users-header'>
+          <h2>Korisnici grupe "{groupName}"</h2>
+        </div>
+        
+        {selectedGroupId && (
+          <div className="user-controls-container">
+            <div style={{flex:1}}>
+              <MultipleSelectUsers
+                selectedGroupId={selectedGroupId}
+                onUserSelect={handleUserSelect}
+                selectedUserIds={selectedUserIds}
+                refreshTrigger={refreshTrigger}
+              />
+            </div>
+            <Button
+              className='add-user-button'
+              variant="contained"
+              onClick={handleAddUserInGroup}
+              size='small'
+            >
+              <PersonAddAltRoundedIcon/>
+            </Button>
+          </div>
+        )}
+      </div>
+      
+      {selectedGroupId ? (
+        loading ? (
+          <div>Učitavanje korisnika...</div>
+        ) : (
+          <div className="users-list">
+            <div className='users-list-header'>
+              <p>Broj članova: {groupUsers.length} </p>
+            </div>
+            {groupUsers.length > 0 ? (
+              groupUsers.map(user => (
+                <div key={user.id} className="user-item">
+                  <div className="user-details">
+                    <FaRegUserCircle size={35} />
+                    <h4>{user.username}</h4>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Nema korisnika u ovoj grupi</p>
+            )}
+          </div>
+        )
+      ) : (
+        <div className="users-list">
+          <p>Izaberite grupu da biste videli i upravljali korisnicima</p>
+        </div>
+      )}
     </div>
-  )
+  </div>
+);
 }
 
 export default RightPanel

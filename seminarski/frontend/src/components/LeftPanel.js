@@ -1,8 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import '../styles/LeftPanel.css';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import CreateGroupDialog from './CreateGroupDialog';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
     
     
 
@@ -27,9 +29,10 @@ import CreateGroupDialog from './CreateGroupDialog';
         const [error, setError] = useState({});
         const [groups, setGroups] = useState([]);
         const [activeGroup, setActiveGroup] = useState(null);
-
-       
-
+        const [displayedGroups, setDisplayedGroups] = useState([]);
+        const [currentPage, setCurrentPage] = useState(1);
+        const [totalPages, setTotalPages] = useState(1);
+        const groupsPerPage = 5;
 
         const handleAddGroup = async  (formData) => {
 
@@ -75,21 +78,53 @@ import CreateGroupDialog from './CreateGroupDialog';
             }
         };
 
-        const allGroups = async () => {
+        const allGroups = useCallback( async () => {
           try {
               const response = await axios.get('/api/groups'); 
-              setGroups(response.data.groups);
+              const allGroups = response.data.groups;
+              setGroups(allGroups);
+              setTotalPages(Math.ceil(allGroups.length / groupsPerPage));
+              updateDisplayedGroups(allGroups, currentPage);
           } catch (error) {
               console.error("Greška pri dohvatanju grupa:", error);
                   
             }
+          },[currentPage, groupsPerPage]);
+
+          const updateDisplayedGroups = (allGroups, page) => {
+            const startIndex = (page - 1) * groupsPerPage;
+            const endIndex = startIndex + groupsPerPage;
+            setDisplayedGroups(allGroups.slice(startIndex, endIndex));
           };
+      
+          // Funkcije za navigaciju kroz stranice
+          const goToNextPage = () => {
+            if (currentPage < totalPages) {
+              const nextPage = currentPage + 1;
+              setCurrentPage(nextPage);
+              updateDisplayedGroups(groups, nextPage);
+            }
+          };
+      
+          const goToPreviousPage = () => {
+            if (currentPage > 1) {
+              const prevPage = currentPage - 1;
+              setCurrentPage(prevPage);
+              updateDisplayedGroups(groups, prevPage);
+            }
+          };
+          useEffect(() => {
+            updateDisplayedGroups(groups, currentPage);
+          }, [currentPage, groups]);
+      
 
         const handleGroupClick = (groupId) => {
           setActiveGroup(groupId);
           onGroupSelect(groupId);
         };
-        useEffect(() => { allGroups();}, []); 
+        useEffect(() => { 
+          allGroups();
+        }, [allGroups]); 
     
       return (
         <div className="groups-panel">
@@ -116,7 +151,7 @@ import CreateGroupDialog from './CreateGroupDialog';
           <div className="groups_card">
             <span className="list_header">Moje grupe</span>
             <div className="groups-list">
-              {groups.map((group) => (
+              {displayedGroups.map((group) => (
                   <div 
                   key={group.id} 
                   className={`group-item ${activeGroup === group.id ? 'active' : ''}`}
@@ -138,6 +173,31 @@ import CreateGroupDialog from './CreateGroupDialog';
                 </div>
               ))}
             
+            </div>
+            <div className="pagination-controls">
+              <Button 
+                onClick={goToPreviousPage} 
+                disabled={currentPage === 1}
+                variant="contained"
+                size="small"
+                className="pagination-button"
+                style={{ backgroundColor: currentPage === 1 ? '' : '#456db4' }}
+              >
+                <NavigateBeforeIcon />
+              </Button>
+              <span className="page-indicator">
+                {currentPage} / {totalPages}
+              </span>
+              <Button 
+                onClick={goToNextPage} 
+                disabled={currentPage === totalPages || totalPages === 0}
+                variant="contained"
+                size="small"
+                className="pagination-button"
+                style={{ backgroundColor: currentPage === totalPages || totalPages === 0 ? '' : '#456db4' }}
+              >
+                <NavigateNextIcon />
+              </Button>
             </div>
           </div>
         </div>

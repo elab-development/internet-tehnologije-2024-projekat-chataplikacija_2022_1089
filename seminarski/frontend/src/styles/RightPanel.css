@@ -1,92 +1,167 @@
 /*RightPanel*/
-
-
-.right-groups-panel{
-  width: 280px;
+.right-groups-panel {
+  width: 25%; /* Umesto fiksnih 280px */
+  min-width: 280px; /* Da ne bude premali na manjim ekranima */
+  max-width: 350px; /* Da ne bude prevelik na velikim ekranima */
   height: 100vh;
   background-color: #f8f6ff;
   display: flex;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
+  overflow-y: hidden; 
+  padding-bottom: 30px;
 }
 
-.header-right-panel{
+.header-right-panel {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 16px 12px;
+  padding: 3% 3%; /* Umesto fiksnih piksela */
   border-bottom: 1px solid #e0dcf5;
-  margin-bottom: 10px;
-}
-.users-header{
-    padding: 10px;
-    border-bottom: 1px solid #e0dcf5;
-    border-top: 1px solid #e0dcf5;
+  margin-bottom: 2%; /* Relativna margina */
+  gap: 10px;
 }
 
+.users-header {
+  padding: 2.5%; /* Umesto fiksnih 10px */
+  border-bottom: 1px solid #e0dcf5;
+  border-top: 1px solid #e0dcf5;
+  font-size: 0.75rem; /* Umesto fiksnih 12px */
+}
 
-.logout-button{
-    background-color: #456db4 !important;
+.logout-button {
+  background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 6px 12px !important;
+  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  min-width: auto !important;
+}
+
+.statistic-button{
+  background-color: #456db4 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
   min-width: auto !important;
 }
 
 .logged-user-card {
-    background: linear-gradient(120deg, #e2e8f3, #e9e3ff);
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 12px;
-    box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    width: auto;
-    flex-shrink: 0;
-    margin-bottom: 12px;
-    
+  background: linear-gradient(120deg, #e2e8f3, #e9e3ff);
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 3%; /* Umesto fiksnih 10px */
+  border-radius: 12px;
+  box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  width: 96%;
+  flex-shrink: 0;
+  margin-bottom: 3%; /* Umesto fiksnih 12px */
 }
 
 .logged-user-card:hover {
-    transform: scale(1.05);
-    background-color: #f5c8a0;
-    box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.2);
+ 
+  background-color: #f5c8a0;
+  box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.2);
 }
-.user-info{
-    flex: 1;
+
+.user-info {
+  flex: 1;
 }
 
 .user-info h3 {
-    color: #333;
-    font-size: 20px;
-    font-weight: bold;
+  color: #333;
+  font-size: 1.25rem; /* Umesto fiksnih 20px */
+  font-weight: bold;
 }
 
 .user-info p {
-    color: #666;
-    font-size: 16px;
+  color: #666;
+  font-size: 1rem; /* Umesto fiksnih 16px */
 }
 
 .logged-user-card p:last-child {
-    font-style: italic;
-    color: #888;
+  font-style: italic;
+  color: #888;
 }
 
-
-
-.add-user-button{
-    background-color: #456db4 !important;
+.add-user-button {
+  background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 6px 12px !important;
+  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
   min-width: auto !important;
 }
+
 .user-controls-container {
-    display: flexbox;
-    align-items: center;
-    justify-content: center;
-    gap: 10px; 
-   
-    
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5%; /* Umesto fiksnih 10px */
+  margin-top: 2.5%; /* Umesto fiksnih 10px */
+}
+
+.user-details {
+  display: flex;
+  align-items: center;
+  gap: 3%; /* Umesto fiksnih 15px */
+  color: #a4bae4;
+}
+
+.user-details h4 {
+  font-weight: 200;
+  margin: 0;
+  font-size: 0.938rem; /* Umesto fiksnih 15px */
+  color: black !important;
+}
+
+.user-item {
+  padding: 3.5% 2.5%; /* Umesto fiksnih piksela */
+  border-bottom: 1px solid #c1b6eb;
+  margin-left: 3% !important;
+  margin-right: 5% !important;
+}
+.panel-fixed-content {
+  flex-shrink: 0; /* Sprečava da se ovaj deo smanji */
+  margin-bottom: 15px;
+
+}
+
+.users-list {
+  margin-top: 2.5%; /* Umesto fiksnih 10px */
+  margin-bottom: 2.5%;
+  border: 1px solid #b7a9ea;
+  border-radius: 15px;
+  padding: 2.5%; /* Umesto fiksnih 10px */
+  background: linear-gradient(150deg, #e2e8f3, #efebfe);
+  color: black;
+  width: 96%;
+  overflow-y: auto !important; 
+  flex-grow: 1;
+}
+
+.users-list-header {
+  padding: 0 2.5%; /* Umesto fiksnih piksela */
+}
+@media (max-width: 768px) {
+  .right-groups-panel {
+    width: 35%;
+    min-width: 290px;
   }
+  
+  .user-info h3 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .right-groups-panel {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .user-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
