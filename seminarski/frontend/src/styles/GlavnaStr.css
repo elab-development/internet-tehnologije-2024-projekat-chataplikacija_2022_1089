@@ -31,12 +31,12 @@
     border-left: 2px solid #dbd8e5;
   }
   
-  .main-content {
+  .chat-panel {
     flex: auto; /* Zauzima sav preostali prostor između panela */
     margin-left: 320px !important; 
     margin-right: 320px !important; 
     background-color: #f8f6ff;
-    padding: 20px;
+    padding: 1%;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     margin-top:2px !important;

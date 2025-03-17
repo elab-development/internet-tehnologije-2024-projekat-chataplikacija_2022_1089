@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupsController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,3 +34,8 @@ Route::get('/users', [UserController::class, 'getAllUsers']);
 Route::get('/groups/{groupId}/users', [GroupsController::class, 'getUsersByGroupId']);
 Route::post('/groups/{groupId}/users', [GroupsController::class, 'updateGroupUsers']);
 Route::post('/groups/{groupId}/usersadd', [GroupsController::class, 'addUsersToGroup']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/messages/{groupId}', [MessageController::class, 'index']);
+    Route::post('/messages/{groupId}', [MessageController::class, 'store']);
+});

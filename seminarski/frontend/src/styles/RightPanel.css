@@ -130,7 +130,7 @@
 .users-list {
   margin-top: 2.5%; /* Umesto fiksnih 10px */
   margin-bottom: 2.5%;
-  border: 1px solid #b7a9ea;
+  border: 1px solid #dadada;
   border-radius: 15px;
   padding: 2.5%; /* Umesto fiksnih 10px */
   background: linear-gradient(150deg, #e2e8f3, #efebfe);

@@ -131,7 +131,7 @@ const RightPanel = ({ selectedGroupId }) => {
 
     
   return (
-    <div className='right-panel'>
+    
     <div className='right-groups-panel'>
       {/* Fiksni sadržaj koji se uvek prikazuje */}
       <div className='right-panel-fixed-content'>
@@ -221,7 +221,7 @@ const RightPanel = ({ selectedGroupId }) => {
         </div>
       )}
     </div>
-  </div>
+  
 );
 }
 
