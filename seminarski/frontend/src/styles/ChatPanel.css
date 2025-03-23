@@ -35,7 +35,7 @@
     background-color: #e9e5ff !important;
     color: #666 !important;
     border-radius: 8px !important;
-    padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+    padding: 0.5rem 1rem !important; 
     min-width: auto !important;
     margin-right: 5px !important;
 }
@@ -43,7 +43,7 @@
     background-color: #e9e5ff !important;
     color: #666 !important;
     border-radius: 8px !important;
-    padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+    padding: 0.5rem 1rem !important; 
     min-width: auto !important;
     margin-right: 5px !important;
 }
@@ -52,30 +52,30 @@
     background-color: #e9e5ff !important;
     color: #666 !important;
     border-radius: 8px !important;
-    padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+    padding: 0.5rem 1rem !important; 
     min-width: auto !important;
 }
 
-.create-message-container{
-    padding: 4px;
-}
+
 
 .input-message{
-    flex-grow: 1;
-    width: 88%;
+    
+    width: 100%;
     padding: 2% 4%;
+    padding-right: 20px;
     border: 1px solid #ddd;
     border-radius: 15px;
     font-size: 16px;
     margin-right: 5px !important;
     background-color: #ebe9fa;
+    box-sizing: border-box;
     
   }
   .send-message-button{
     background-color: #456db4 !important;
     color: #ffffff !important;
     border-radius: 8px !important;
-    padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+    padding: 0.5rem 1rem !important; 
     min-width: auto !important;
 }
 
@@ -88,13 +88,14 @@
 .message-container {
     display: flex;
     margin-bottom: 10px;
-    
+    align-items: flex-start;
 }
 
 .own-message {
     align-self: flex-end;
-    flex-direction: row-reverse;
+    flex-direction: row-reverse !important;
     margin-right: 10px !important;
+    cursor: pointer;
 }
 
 .other-message {
@@ -103,7 +104,6 @@
 
 .message-avatar {
     margin: 0 8px;
-    
 }
 
 .message-content {
@@ -113,11 +113,15 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     margin-right: 7px !important;
     margin-left: 7px !important;
+    max-width: 60%;
 }
 
 .own-message .message-content {
     background-color: #dee8fc;
-    
+    max-width: 60%;
+}
+.own-message .message-content:hover{
+    background-color: #c9d7f3;
 }
 
 .message-header {
@@ -141,3 +145,157 @@
     font-size: 14px;
     word-break: break-word;
 }
+
+/* Izmenjeni deo za message-actions-inline */
+.message-actions-inline {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.own-message .message-actions-inline {
+    order: 1; /* Stavlja dugme nakon avatara ali pre sadržaja poruke */
+    margin-right: 0;
+    margin-left: 10px;
+}
+
+.delete-button {
+    background-color: transparent;
+    color: #456db4;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #e4ebf9;
+}
+
+.edit-message-button{
+    background-color: transparent;
+    color: #456db4;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.edit-message-button:hover{
+    background-color: #e4ebf9;
+}
+
+.edit-message-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .edit-message-content {
+    background: linear-gradient(120deg, #e2e8f3, #c6bde7);
+    padding: 10px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 300px;
+    box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .edit-message-content h3{
+    margin-top: 10px ;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-right: 5px !important;
+  }
+  
+  .edit-message-content textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .modal-actions button {
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .modal-actions button:first-child {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+  }
+  
+  .modal-actions button:last-child {
+    background-color: #456db4 ;
+    color: white;
+    border: none;
+  }
+
+  .create-message-container{
+        padding: 4px;
+        width: 100%;
+        display: flex;
+    align-items: center;
+    }
+
+    .input-message-container {
+        position: relative;
+        flex-grow: 1;
+        width: 88%;
+        margin-right: 5px !important;
+    }
+   
+    
+    .emoji-button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #f3b05f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        z-index: 2;
+    }
+    
+    .emoji-button:hover {
+        background-color: #e1def6;
+        border-radius: 20px;
+        border: none;
+    }
+    
+    .emoji-picker-wrapper {
+        position: absolute;
+        bottom: 45px;
+        right: 0;
+        z-index: 10;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+    }

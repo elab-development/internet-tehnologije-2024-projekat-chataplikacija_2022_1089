@@ -49,7 +49,7 @@ class MessageController extends Controller
                 'content' => $request->content,
             ]);
 
-            // Učitaj podatke o korisniku
+
             $message->load('user');
 
             // Emituj događaj za WebSockets
@@ -59,5 +59,35 @@ class MessageController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Došlo je do greške pri kreiranju poruke', 'error' => $e->getMessage()], 500);
         }
+    }
+    public function destroy(Message $message)
+    {
+        if ($message->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Nemate dozvolu za brisanje ove poruke'], 403);
+        }
+
+        // Brisanje poruke
+        $message->delete();
+
+        return response()->json(['message' => 'Poruka uspešno obrisana']);
+    }
+
+    public function edit(Message $message, Request $request)
+    {
+        if ($message->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Nemate dozvolu za editvanje ove poruke'], 403);
+        }
+        $validatedData = $request->validate([
+            'content' => 'required|string|max:1000'
+        ]);
+
+        $message->update([
+            'content' => $validatedData['content']
+        ]);
+
+        return response()->json([
+            'message' => 'Poruka uspešno editovana',
+            'data' => $message
+        ]);
     }
 }

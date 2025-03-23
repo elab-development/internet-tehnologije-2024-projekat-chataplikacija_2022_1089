@@ -38,4 +38,6 @@ Route::post('/groups/{groupId}/usersadd', [GroupsController::class, 'addUsersToG
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/messages/{groupId}', [MessageController::class, 'index']);
     Route::post('/messages/{groupId}', [MessageController::class, 'store']);
+    Route::delete('messages/{message}', [MessageController::class, 'destroy']);
+    Route::put('messages/{message}', [MessageController::class, 'edit']);
 });
