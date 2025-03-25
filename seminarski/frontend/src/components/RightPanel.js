@@ -158,8 +158,13 @@ const RightPanel = ({ selectedGroupId }) => {
         <div className='logged-user-card'>
           <div className='user-info'>
             <h3>Korisnički profil</h3>
-            <p><strong>Ime:</strong> {user.username}</p>
-            <p><strong>📧Email:</strong> {user.email}</p>
+            <p><strong></strong> {user.username}</p>
+            {
+            user.role === 'user' && (
+              <p><strong>📧Email:</strong> {user.email}</p>
+            )
+          }
+           
           </div>
           <div className='user-img'>
             <img src={logo} alt="User Logo" style={{ width: "70px", height: "70px", 
@@ -173,7 +178,7 @@ const RightPanel = ({ selectedGroupId }) => {
         
         {selectedGroupId && (
           <div className="user-controls-container">
-            <div style={{flex:1}}>
+            <div style={{flex:1, maxWidth:"75%"}}>
               <MultipleSelectUsers
                 selectedGroupId={selectedGroupId}
                 onUserSelect={handleUserSelect}

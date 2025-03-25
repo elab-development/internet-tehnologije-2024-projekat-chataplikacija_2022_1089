@@ -68,17 +68,18 @@ const WelcomePage = () => {
     e.preventDefault();
   
     try {
-      // Šalje zahtev za guest login bez unosa username-a
+      
       const response = await axios.post('api/guest-login');
   
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('token_ulogovanog', response.data.token);
+      localStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));
   
-      // Postavljanje default Authorization hedera
+      
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
   
       setShowGuestModal(false);
-      navigate('/chat_interface');
+      console.log("uspesno je usao gost", response.data);
+      navigate('/glavna');
     } catch (error) {
       console.error('Guest login error:', error);
       setErrors({

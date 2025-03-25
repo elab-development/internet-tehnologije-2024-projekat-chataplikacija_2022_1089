@@ -67,22 +67,26 @@
 
 .user-info {
   flex: 1;
+  padding-right: 10px;
 }
 
 .user-info h3 {
   color: #333;
-  font-size: 1.25rem; /* Umesto fiksnih 20px */
+  font-size: 1.25rem; 
   font-weight: bold;
+  text-align: center;
 }
 
 .user-info p {
-  color: #666;
-  font-size: 1rem; /* Umesto fiksnih 16px */
+  color: #000000;
+  font-size: 1rem ; 
+  text-align: center;
 }
 
 .logged-user-card p:last-child {
   font-style: italic;
   color: #888;
+  text-align: left;
 }
 
 .add-user-button {

@@ -92,12 +92,12 @@ class AuthController extends Controller
 
         // Generiše novi redni broj gosta
         $guestNumber = $lastGuestUser
-            ? (int)str_replace('gost', '', $lastGuestUser->username) + 1
+            ? (int)str_replace('Gost', '', $lastGuestUser->username) + 1
             : 1;
 
         // Kreiranje novog gost korisnika
         $guestUser = User::create([
-            'username' => 'gost' . $guestNumber,
+            'username' => 'Gost' . $guestNumber,
             'email' => null,
             'password' => null,
             'role' => 'guest'

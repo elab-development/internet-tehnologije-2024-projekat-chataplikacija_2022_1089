@@ -105,7 +105,7 @@ export default function MultipleSelectUsers({ selectedGroupId, onUserSelect, sel
 
   return (
     
-      <FormControl sx={{ width: '100%'}}>
+      <FormControl sx={{ width: '100%', maxWidth:"100%" }}>
         <InputLabel id="multiple-user-select-label">Korisnici</InputLabel>
         <Select
           labelId="multiple-user-select-label"

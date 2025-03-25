@@ -46,7 +46,7 @@ const Register = () => {
         });
 
         console.log('Registracija uspešna:', response.data);
-        navigate("/l");
+        navigate("/");
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.log('Validation Errors:', error.response.data.errors);
