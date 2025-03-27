@@ -5,27 +5,17 @@
   background-color: #f8f6ff;
   display: flex;
   flex-direction: column;
-  
+ 
   font-family: 'Inter', sans-serif;
 }
 
-.groups-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 12px;
-  border-bottom: 1px solid #e0dcf5;
-  margin-bottom: 10px;
-}
 
-.groups-header h2 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2f2f2f;
-  margin: 0;
-}
+
+
 
 .add-button {
+   margin-top: 10px !important;
+   margin-bottom: 10px !important;
   background-color: #456db4 !important;
   color: white !important;
   font-size: 12px !important;
@@ -148,4 +138,19 @@
   font-size: 14px;
   color: #555;
   margin: 0 10px;
+}
+.group-controls-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5%; /* Umesto fiksnih 10px */
+  margin-top: 2.5%; /* Umesto fiksnih 10px */
+}
+.hop-in-group-button {
+  background-color: #456db4 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  min-width: auto !important;
+  
 }

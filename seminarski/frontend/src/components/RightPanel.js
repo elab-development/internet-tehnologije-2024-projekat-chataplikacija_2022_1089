@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import axios from 'axios';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -72,6 +72,7 @@ const RightPanel = ({ selectedGroupId }) => {
     const handleLogout = async(e)=>{
         
         try {
+          
             
             const token = localStorage.getItem('token_ulogovanog');
             
@@ -136,6 +137,7 @@ const RightPanel = ({ selectedGroupId }) => {
       {/* Fiksni sadržaj koji se uvek prikazuje */}
       <div className='right-panel-fixed-content'>
         <div className='header-right-panel'>
+        <Tooltip title="Prikaz statistike" arrow>
         <Button
             className='statistic-button'
             variant="contained"
@@ -144,7 +146,8 @@ const RightPanel = ({ selectedGroupId }) => {
           >
             <AssessmentIcon />
           </Button>
-        
+        </Tooltip>
+        <Tooltip title="Odjavi se" arrow>
           <Button
             className='logout-button'
             variant="contained"
@@ -153,6 +156,7 @@ const RightPanel = ({ selectedGroupId }) => {
           >
             <ExitToAppIcon/>
           </Button>
+          </Tooltip>
         </div>
         
         <div className='logged-user-card'>
@@ -181,11 +185,13 @@ const RightPanel = ({ selectedGroupId }) => {
             <div style={{flex:1, maxWidth:"75%"}}>
               <MultipleSelectUsers
                 selectedGroupId={selectedGroupId}
+                userId={user.id}
                 onUserSelect={handleUserSelect}
                 selectedUserIds={selectedUserIds}
                 refreshTrigger={refreshTrigger}
               />
             </div>
+            <Tooltip title="Dodaj korisnika" arrow>
             <Button
               className='add-user-button'
               variant="contained"
@@ -194,6 +200,7 @@ const RightPanel = ({ selectedGroupId }) => {
             >
               <PersonAddAltRoundedIcon/>
             </Button>
+            </Tooltip>
           </div>
         )}
       </div>

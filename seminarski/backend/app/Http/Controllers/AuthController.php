@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Response;
 //use Laravel\Sanctum\Contracts\HasApiTokens;
 
 
@@ -39,7 +40,7 @@ class AuthController extends Controller
             // Logovanje grešaka
             Log::error('Validation Errors:', $validator->errors()->toArray());
 
-            return response()->json([
+            return Response::json([
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -50,7 +51,7 @@ class AuthController extends Controller
             'role' => 'user'
         ]);
 
-        return response()->json($user, 201);
+        return Response::json($user, 201);
     }
 
 
@@ -72,7 +73,7 @@ class AuthController extends Controller
         // Kreiranje tokena
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
+        return Response::json([
             'token' => $token,
             'user' => [
                 'id' => $user->id,
@@ -92,7 +93,7 @@ class AuthController extends Controller
 
         // Generiše novi redni broj gosta
         $guestNumber = $lastGuestUser
-            ? (int)str_replace('Gost', '', $lastGuestUser->username) + 1
+            ? (int)Str::replace('Gost', '', $lastGuestUser->username) + 1
             : 1;
 
         // Kreiranje novog gost korisnika
@@ -105,7 +106,7 @@ class AuthController extends Controller
 
         $token = $guestUser->createToken('guest_token')->plainTextToken;
 
-        return response()->json([
+        return Response::json([
             'token' => $token,
             'user' => [
                 'id' => $guestUser->id,

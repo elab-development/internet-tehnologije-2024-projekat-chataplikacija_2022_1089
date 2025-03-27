@@ -30,7 +30,14 @@
     gap: 16px;
     overflow-y: auto ;
 }
+.buttons{
+    display: flex;
+    align-items: center;
+}
 
+.search_field {
+    margin-right: 10px !important;
+}
 .search-button{
     background-color: #e9e5ff !important;
     color: #666 !important;

@@ -10,7 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 class GroupsController extends Controller
 {
-
+    public function getAllGroups()
+    {
+        $groups = Group::all(['id', 'name', 'is_private', 'description']);
+        return response()->json(['groups' => $groups]);
+    }
 
     public function getGroups()
     {
@@ -33,7 +37,7 @@ class GroupsController extends Controller
 
 
     //kreiranje nove chat sobe
-    public function addNewGroup(Request $request)
+    public function addNewGroup(Request $request, $userId)
     {
 
         $request->validate([
@@ -42,12 +46,30 @@ class GroupsController extends Controller
             'is_private' => 'boolean',
         ]);
 
-
-        $group = Group::create([
+        try{
+             $group = Group::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'is_private' => $request->input('is_private', false),  // Ako nije postavljeno, podrazumevano je false
-        ]);
+            ]);
+
+            $this->addUsersToGroup(
+                new Request(['user_ids' => [$userId]]), 
+                $group->id
+            );
+    
+            return response()->json([
+                'message' => 'Grupa uspešno kreirana',
+                'group' => $group
+            ], 201);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Greška prilikom kreiranja grupe',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+       
     }
 
     public function getUsersByGroupId($groupId)
@@ -60,6 +82,18 @@ class GroupsController extends Controller
 
         return response()->json(['users' => $users]);
     }
+
+    public function getGroupsByUserId($userId)
+    {
+        $groups = DB::table('groups')
+            ->join('group_user', 'groups.id', '=', 'group_user.group_id')
+            ->where('group_user.user_id', $userId)
+            ->select('groups.*')
+            ->get();
+
+        return response()->json(['groups' => $groups]);
+    }
+
 
     public function updateGroupUsers(Request $request, $groupId)
     {

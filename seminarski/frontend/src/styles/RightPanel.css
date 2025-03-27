@@ -1,8 +1,8 @@
 /*RightPanel*/
 .right-groups-panel {
-  width: 25%; /* Umesto fiksnih 280px */
-  min-width: 280px; /* Da ne bude premali na manjim ekranima */
-  max-width: 350px; /* Da ne bude prevelik na velikim ekranima */
+  width: 25%; 
+  min-width: 280px; 
+  max-width: 350px; 
   height: 100vh;
   background-color: #f8f6ff;
   display: flex;
@@ -16,9 +16,9 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 3% 3%; /* Umesto fiksnih piksela */
+  padding: 3% 3%; 
   border-bottom: 1px solid #e0dcf5;
-  margin-bottom: 2%; /* Relativna margina */
+  margin-bottom: 2%; 
   gap: 10px;
 }
 
@@ -26,14 +26,14 @@
   padding: 2.5%; /* Umesto fiksnih 10px */
   border-bottom: 1px solid #e0dcf5;
   border-top: 1px solid #e0dcf5;
-  font-size: 0.75rem; /* Umesto fiksnih 12px */
+  font-size: 0.75rem; 
 }
 
 .logout-button {
   background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  padding: 0.5rem 1rem !important; 
   min-width: auto !important;
 }
 
@@ -41,7 +41,7 @@
   background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  padding: 0.5rem 1rem !important; 
   min-width: auto !important;
 }
 
@@ -50,13 +50,13 @@
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  padding: 3%; /* Umesto fiksnih 10px */
+  padding: 3%; 
   border-radius: 12px;
   box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   width: 96%;
   flex-shrink: 0;
-  margin-bottom: 3%; /* Umesto fiksnih 12px */
+  margin-bottom: 3%; 
 }
 
 .logged-user-card:hover {
@@ -93,7 +93,7 @@
   background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  padding: 0.5rem 1rem !important; 
   min-width: auto !important;
 }
 
@@ -101,26 +101,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5%; /* Umesto fiksnih 10px */
-  margin-top: 2.5%; /* Umesto fiksnih 10px */
+  gap: 2.5%; 
+  margin-top: 2.5%; 
 }
 
 .user-details {
   display: flex;
   align-items: center;
-  gap: 3%; /* Umesto fiksnih 15px */
+  gap: 3%; 
   color: #a4bae4;
 }
 
 .user-details h4 {
   font-weight: 200;
   margin: 0;
-  font-size: 0.938rem; /* Umesto fiksnih 15px */
+  font-size: 0.938rem; 
   color: black !important;
 }
 
 .user-item {
-  padding: 3.5% 2.5%; /* Umesto fiksnih piksela */
+  padding: 3.5% 2.5%;
   border-bottom: 1px solid #c1b6eb;
   margin-left: 3% !important;
   margin-right: 5% !important;
@@ -132,11 +132,11 @@
 }
 
 .users-list {
-  margin-top: 2.5%; /* Umesto fiksnih 10px */
+  margin-top: 2.5%; 
   margin-bottom: 2.5%;
   border: 1px solid #dadada;
   border-radius: 15px;
-  padding: 2.5%; /* Umesto fiksnih 10px */
+  padding: 2.5%; 
   background: linear-gradient(150deg, #e2e8f3, #efebfe);
   color: black;
   width: 96%;
@@ -145,7 +145,7 @@
 }
 
 .users-list-header {
-  padding: 0 2.5%; /* Umesto fiksnih piksela */
+  padding: 0 2.5%; 
 }
 @media (max-width: 768px) {
   .right-groups-panel {

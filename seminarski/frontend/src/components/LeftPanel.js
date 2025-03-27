@@ -1,14 +1,16 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import '../styles/LeftPanel.css';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import axios from 'axios';
 import CreateGroupDialog from './CreateGroupDialog';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-    
+import GroupsIcon from '@mui/icons-material/Groups';
+import HopInGroup from './HopInGroup';
+
     
 
-    const LeftPanel = ({ onGroupSelect }) => {
+    const LeftPanel = ({ onGroupSelect}) => {
       // eslint-disable-next-line no-unused-vars
       const [groupData, setGroupData] = useState({
           name: "",
@@ -25,14 +27,28 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
           setOpenDialog(false);
           setError({});
         };
-        // eslint-disable-next-line no-unused-vars
+       
         const [error, setError] = useState({});
         const [groups, setGroups] = useState([]);
         const [activeGroup, setActiveGroup] = useState(null);
         const [displayedGroups, setDisplayedGroups] = useState([]);
         const [currentPage, setCurrentPage] = useState(1);
         const [totalPages, setTotalPages] = useState(1);
-        const groupsPerPage = 5;
+        const [selectedGroupId, setSelectedGroupId] = useState(null);
+        // eslint-disable-next-line no-unused-vars
+        const [resetGroupSelection, setResetGroupSelection] = useState(null);
+        const groupsPerPage = 4;
+        
+        
+        const userDataString = localStorage.getItem('ulogovani_user');
+        let userId = null;
+        const userData = JSON.parse(userDataString);
+        userId = userData.id; 
+        //console.log('Stored user ID:', userId);
+        if (!userId) {
+          console.error("Korisnik nije ulogovan..user data error");
+        }
+        
 
         const handleAddGroup = async  (formData) => {
 
@@ -44,8 +60,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
           }
             
             try {
+              const response= await axios.post(`/api/add-group/${userId}`,{
               
-              const response = await axios.post('api/add-group', {
                   name: formData.name,
                   description: formData.description,
                   is_private: formData.is_private,
@@ -54,7 +70,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
               console.log('Uspesno dodata soba:', response.data);
               
 
-              allGroups();
+              myGroups();
 
               setGroupData({
                 name: '',
@@ -77,25 +93,59 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
               }
             }
         };
+        const handleUserSelect = (groupId) => {
+          setSelectedGroupId(groupId);
+        };
 
-        const allGroups = useCallback( async () => {
-          try {
-              const response = await axios.get('/api/groups'); 
-              const allGroups = response.data.groups;
-              setGroups(allGroups);
-              setTotalPages(Math.ceil(allGroups.length / groupsPerPage));
-              updateDisplayedGroups(allGroups, currentPage);
-          } catch (error) {
-              console.error("Greška pri dohvatanju grupa:", error);
-                  
+        const handleJoinGroup = async()=>{
+            if (!selectedGroupId) {
+              return;
             }
-          },[currentPage, groupsPerPage]);
+            try {
+               await axios.post(`/api/groups/${selectedGroupId}/usersadd`, {
+                user_ids: [userId]
+              });
+          
+              
+              myGroups(); // Funkcija za osvežavanje liste grupa
+              
+              // Resetovanje selektovane grupe
+              setSelectedGroupId(null);
+             
+            
+          
+            } catch (error) {
+              console.error('Greška pri pridruživanju grupi:', error);
+            }
+  
+        }
+        
 
-          const updateDisplayedGroups = (allGroups, page) => {
-            const startIndex = (page - 1) * groupsPerPage;
-            const endIndex = startIndex + groupsPerPage;
-            setDisplayedGroups(allGroups.slice(startIndex, endIndex));
-          };
+
+        const myGroups = useCallback( async()=>{
+          try {
+            if (!userId) {
+              console.error("Korisnik nije ulogovan..erorr mygroups");
+              return;
+            }
+            const response = await axios.get(`/api/groups/${userId}/groups`);
+            const myGroupsData = response.data.groups;
+            setGroups(myGroupsData);
+            setTotalPages(Math.ceil(myGroupsData.length / groupsPerPage));
+            updateDisplayedGroups(myGroupsData, currentPage);
+        } catch (error) {
+            console.error("Greška pri dohvatanju grupa:", error);
+                
+          }
+        }, [currentPage, groupsPerPage, userId]);
+
+        
+
+        const updateDisplayedGroups = (myGroups, page) => {
+          const startIndex = (page - 1) * groupsPerPage;
+          const endIndex = startIndex + groupsPerPage;
+          setDisplayedGroups(myGroups.slice(startIndex, endIndex));
+        };
       
           // Funkcije za navigaciju kroz stranice
           const goToNextPage = () => {
@@ -113,6 +163,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
               updateDisplayedGroups(groups, prevPage);
             }
           };
+
+          useEffect(() => {
+            myGroups(); 
+          }, [myGroups]); 
+
           useEffect(() => {
             updateDisplayedGroups(groups, currentPage);
           }, [currentPage, groups]);
@@ -122,15 +177,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
           setActiveGroup(groupId);
           onGroupSelect(groupId);
         };
-        useEffect(() => { 
-          allGroups();
-        }, [allGroups]); 
+       
     
       return (
         <div className="groups-panel">
-          <div className="groups-header">
-            <h2>Dostupne grupe</h2>
-          </div>
+          
               <Button 
               className='add-button'
               variant="contained" 
@@ -147,6 +198,26 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
           onSubmit={handleAddGroup}
           error={error}
         />
+        <div className="group-controls-container">
+            <div style={{flex:1, maxWidth:"75%"}}>
+              <HopInGroup
+                userId={userId}
+                onGroupSelect={handleUserSelect}
+                onReset={setResetGroupSelection}
+              />
+            </div>
+            <Tooltip title="Pridruži se grupi" arrow>
+            <Button
+              className='hop-in-group-button'
+              variant="contained"
+              onClick={handleJoinGroup}
+              size='small'
+              
+            >
+              <GroupsIcon/>
+            </Button>
+            </Tooltip>
+          </div>
 
           <div className="groups_card">
             <span className="list_header">Moje grupe</span>
@@ -175,6 +246,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
             
             </div>
             <div className="pagination-controls">
+              <Tooltip title="Prethodna stranica" arrow>
               <Button 
                 onClick={goToPreviousPage} 
                 disabled={currentPage === 1}
@@ -185,9 +257,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
               >
                 <NavigateBeforeIcon />
               </Button>
+              </Tooltip>
               <span className="page-indicator">
                 {currentPage} / {totalPages}
               </span>
+              <Tooltip title="Sledeća stranica" arrow >
               <Button 
                 onClick={goToNextPage} 
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -195,9 +269,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
                 size="small"
                 className="pagination-button"
                 style={{ backgroundColor: currentPage === totalPages || totalPages === 0 ? '' : '#456db4' }}
+    
               >
                 <NavigateNextIcon />
               </Button>
+              </Tooltip>
             </div>
           </div>
         </div>

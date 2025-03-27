@@ -27,7 +27,7 @@ function getStyles(name, selectedUsers, theme) {
   };
 }
 
-export default function MultipleSelectUsers({ selectedGroupId, onUserSelect, selectedUserIds = [], refreshTrigger = 0 }) {
+export default function MultipleSelectUsers({ selectedGroupId, onUserSelect,userId, selectedUserIds = [], refreshTrigger = 0 }) {
   const theme = useTheme();
   const [allUsers, setAllUsers] = useState([]);
   const [groupUsers, setGroupUsers] = useState([]);
@@ -56,10 +56,8 @@ export default function MultipleSelectUsers({ selectedGroupId, onUserSelect, sel
       const fetchGroupUsers = async () => {
         try {
           const response = await axios.get(`/api/groups/${selectedGroupId}/users`);
-          // Pretpostavljamo da response.data.users sadrži niz korisnika sa id i name
-          //const userIds = response.data.users.map(user => user.id.toString());
           setGroupUsers(response.data.users);
-          //setSelectedUsers(userIds);
+          
         } catch (error) {
           console.error('Greška pri dohvatanju korisnika(fja za one koji su vec u grui):', error);
         }

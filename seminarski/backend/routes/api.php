@@ -27,11 +27,13 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::post('/guest-login', [AuthController::class, 'guestLogin']);
 Route::get('/groups', [GroupsController::class, 'getGroups']);
-Route::post('/add-group', [GroupsController::class, 'addNewGroup']);
+Route::post('/add-group/{userId}', [GroupsController::class, 'addNewGroup']);
 Route::get('/groups/{groupId}/users', [UserController::class, 'getUsersByGroupId']);
 
 Route::get('/users', [UserController::class, 'getAllUsers']);
+Route::get('/groups', [GroupsController::class, 'getAllGroups']);
 Route::get('/groups/{groupId}/users', [GroupsController::class, 'getUsersByGroupId']);
+Route::get('/groups/{userId}/groups', [GroupsController::class, 'getGroupsByUserId']);
 Route::post('/groups/{groupId}/users', [GroupsController::class, 'updateGroupUsers']);
 Route::post('/groups/{groupId}/usersadd', [GroupsController::class, 'addUsersToGroup']);
 

@@ -3,13 +3,15 @@ import "../styles/ChatPanel.css";
 import SearchIcon from '@mui/icons-material/Search';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import { Button, Avatar } from '@mui/material';
+import { Button, Avatar, Tooltip } from '@mui/material';
 import axios from 'axios';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import EmojiPicker from 'emoji-picker-react';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+import SearchMessages from './SearchMessages';
+
 
 function ChatPanel({ selectedGroupId }) {
 
@@ -22,16 +24,23 @@ function ChatPanel({ selectedGroupId }) {
     const [editingMessage, setEditingMessage] = useState(null);
     const [editMessageContent, setEditMessageContent] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [filteredMessages, setFilteredMessages] = useState(null);
     
     useEffect(() => {
-        if (!selectedGroupId) return;
+        if (!selectedGroupId) {
+          setGroupName("Izaberite grupu");
+        return;
+        }
+
 
         const fetchGroupName = async () => {
             try {
                 const response = await axios.get('/api/groups'); 
                 const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
-                setGroupName(foundGroup?.name || "(Izaberite grupu)");
+                
+                setGroupName(foundGroup?.name);
+                
             } catch (error) {
                 console.error("Greška pri dohvatanju imena grupe:", error);
                 setGroupName("(Izaberite grupu)");
@@ -177,20 +186,36 @@ function ChatPanel({ selectedGroupId }) {
         setShowEmojiPicker(false);
       };
 
+      const handleSearchToggle = () => {
+        setIsSearchVisible(!isSearchVisible);
+      };
+      const handleSearchResults = (results) => {
+        setFilteredMessages(results);
+      };
+
   return (
     <div className='chat-panel-str'>
         <div className='chat-panel-header'>
             <h2>{groupName}</h2> 
             <div className='buttons'>
-                <Button
-                className='search-button'
+              {isSearchVisible && (
+                  <div className='search_field'>
+                      <SearchMessages 
+                        messages={messages}
+                        onSearchResults={handleSearchResults}
+                      />
+                  </div>
+              )}
+              <Tooltip title="Pretraži poruke" arrow>
+                <Button className='search-button'
                 variant="contained"
-                //onClick={}
+                onClick={handleSearchToggle}
                 size='small'
             >
                 <SearchIcon />
             </Button>
-            
+           </Tooltip>
+           <Tooltip title="Promeni pozadinu" arrow>
             <Button
                 className='change-wallpaper-button'
                 variant="contained"
@@ -199,6 +224,8 @@ function ChatPanel({ selectedGroupId }) {
             >
                 <WallpaperIcon/>
             </Button>
+            </Tooltip>
+            <Tooltip title="Napusti grupu" arrow>
             <Button
                 className='leave-group-button'
                 variant="contained"
@@ -207,13 +234,20 @@ function ChatPanel({ selectedGroupId }) {
             >
                 <GroupRemoveIcon/>
             </Button>
+            </Tooltip>
           </div>
         </div>
         <div className='chat-window'>
-        {messages.length === 0 ? (
-                    <p className="no-messages">Još nema poruka. Budite prvi koji će započeti razgovor!</p>
+        {groupName === "Izaberite grupu" ? (
+          <p className="no-messages">⬅ Kliknite na grupu u kojoj zelite chatovati!</p>
+        ) : (
+         (filteredMessages || messages).length === 0 ? (
+                    <p className="no-messages">
+                      {filteredMessages ? "Nema rezultata pretrage." 
+                      : "Još nema poruka. Budite prvi koji će započeti razgovor!"}
+                      </p>
                 ) : (
-                    messages.map((msg, index) => {
+                  (filteredMessages ||messages).map((msg, index) => {
                         const isOwnMessage = currentUser && msg.user_id === currentUser.id;
                         
                         return(
@@ -255,6 +289,7 @@ function ChatPanel({ selectedGroupId }) {
                       })
 
                         
+                )
                 )}
                 <div ref={messagesEndRef} />
 
