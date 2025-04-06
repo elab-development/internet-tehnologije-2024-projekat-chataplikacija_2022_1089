@@ -6,7 +6,7 @@ use App\Models\Group;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 
 class GroupsController extends Controller
 {
@@ -132,5 +132,128 @@ class GroupsController extends Controller
                 'message' => 'Došlo je do greške prilikom obrade zahteva'
             ], 500);
         }
+    }
+
+
+    public function getGroupActivity()
+    {
+        $groupActivity = Group::select('groups.id', 'groups.name')
+            ->leftJoin('messages', 'groups.id', '=', 'messages.group_id')
+            ->selectRaw('COALESCE(COUNT(messages.id), 0) as message_count')
+            ->groupBy('groups.id', 'groups.name')
+            ->orderBy('message_count', 'desc')
+            ->get();
+
+            
+
+        return response()->json($groupActivity);
+    }
+
+    public function deleteGroup(int $id)
+    {
+        $group = Group::findOrFail($id);
+        $group->delete();
+
+        return response()->json(['message' => 'Grupa uspešno obrisana']);
+    }
+
+    public function leaveGroup(int $userId, int $groupId)
+    {
+        try {
+            
+            $group = Group::findOrFail($groupId);
+            $group->users()->detach($userId);
+            
+            // Dohvatanje ažurirane liste korisnika u grupi
+            $remainingUsers = DB::table('users')
+                ->join('group_user', 'users.id', '=', 'group_user.user_id')
+                ->where('group_user.group_id', $groupId)
+                ->select('users.id', 'users.username', 'users.email', 'users.role')
+                ->get();
+            
+            return response()->json([
+                'message' => 'Korisnik uspešno uklonjen iz grupe',
+                
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Došlo je do greške prilikom napuštanja grupe'
+            ], 500);
+        }
+    }
+
+    public function addWallpaper(int $groupId, Request $request){
+        try{
+
+            $group = Group::findOrFail($groupId);
+            $validatedData = $request->validate([
+                'wallpaper' => 'required'
+            ]);
+    
+            $group->update([
+                'wallpaper' => $validatedData['wallpaper']
+            ]);
+            return response()->json([
+                'message' => 'Dodata pozadina uspesno',
+               
+            ]);
+    
+
+
+        }catch(\Exception $e){
+            return response()->json([
+                'message' => 'Došlo je do greške prilikom dodavanja pozadine'
+            ], 500);
+        }
+    }
+    public function getWallpaper(int $groupId){
+        try {
+            $group = Group::findOrFail($groupId);
+            return response()->json([
+                'wallpaper' => $group->wallpaper
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Greška prilikom dohvatanja wallpaper-a.'
+            ], 500);
+        }
+
+    }
+    public function deleteWallpaper(int $groupId){
+        /*try {
+            $group = Group::findOrFail($groupId);
+            
+            // Postavlja vrednost 'wallpaper' kolone na null
+            $group->wallpaper = null;
+            $group->save();
+            
+            return response()->json([
+                'message' => 'Pozadina uspešno obrisana'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Došlo je do greške prilikom brisanja pozadine'
+           ], 500);
+          
+        }*/
+        try {
+            $group = Group::findOrFail($groupId);
+            $group->wallpaper = null;
+            $group->save();
+            
+            return response()->json([
+                'message' => 'Pozadina uspešno obrisana'
+            ]);
+        } catch (\Exception $e) {
+            // Vrati sve detalje greške u odgovoru
+            return response()->json([
+                'message' => 'Došlo je do greške prilikom brisanja pozadine',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+
     }
 }

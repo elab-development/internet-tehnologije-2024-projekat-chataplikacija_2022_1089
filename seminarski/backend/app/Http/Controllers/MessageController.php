@@ -86,8 +86,8 @@ class MessageController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Poruka uspešno editovana',
-            'data' => $message
+            'message' => $message,
+            'succes' => true 
         ]);
     }
 }

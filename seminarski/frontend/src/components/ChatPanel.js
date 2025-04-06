@@ -11,9 +11,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmojiPicker from 'emoji-picker-react';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import SearchMessages from './SearchMessages';
+import DeleteIcon from '@mui/icons-material/Delete';
+import WallpaperSelector from './WallpaperSelector';
 
 
-function ChatPanel({ selectedGroupId }) {
+function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
 
     const [groupName, setGroupName] = useState("");
     const [message, setMessage] =useState("");
@@ -23,9 +25,14 @@ function ChatPanel({ selectedGroupId }) {
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [editingMessage, setEditingMessage] = useState(null);
     const [editMessageContent, setEditMessageContent] = useState("");
+    const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [openWallpapers, setOpenWallpapers] = useState(false);
+      const wallpaperRef=useRef(null);
     const [filteredMessages, setFilteredMessages] = useState(null);
+    const [wallpaperUrl, setWallpaperUrl] = useState('');
+
     
     useEffect(() => {
         if (!selectedGroupId) {
@@ -46,18 +53,19 @@ function ChatPanel({ selectedGroupId }) {
                 setGroupName("(Izaberite grupu)");
                 }
             };
-            const fetchMessages = async () => {
-                try {
-                    const response = await axios.get(`/api/messages/${selectedGroupId}`);
-                    setMessages(response.data.messages);
-                } catch (error) {
-                    console.error("Greška pri dohvatanju poruka:", error);
-                }
-            };
+
+        const fetchMessages = async () => {
+            try {
+              const response = await axios.get(`/api/messages/${selectedGroupId}`);
+              setMessages(response.data.messages);
+            } catch (error) {
+               console.error("Greška pri dohvatanju poruka:", error);
+            }
+         };
         
         fetchGroupName();
         fetchMessages();
-      
+        handleGetWallpaper(); 
        
     }, [selectedGroupId]);
 
@@ -114,15 +122,13 @@ function ChatPanel({ selectedGroupId }) {
     };
     const handleDeleteMessage = async (messageId) => {
         try {
-            // Prikazivanje potvrdnog dijaloga pre brisanja
+            
             if (!window.confirm("Da li ste sigurni da želite da obrišete ovu poruku?")) {
               return;
             }
             
-            // Dohvatanje tokena iz localStorage-a (pretpostavljam da koristite ovu metodu autentifikacije)
             const token = localStorage.getItem('token_ulogovanog');
             
-            // Slanje DELETE zahteva na Laravel backend
              await axios.delete(`/api/messages/${messageId}`, {
               headers: {
                 'Authorization': `Bearer ${token}`
@@ -146,6 +152,7 @@ function ChatPanel({ selectedGroupId }) {
           if (message) {
             setEditingMessage(messageId);
             setEditMessageContent(message.content);
+            
             // Zatvoriti meni sa opcijama
             setSelectedMessage(null);
           }
@@ -155,7 +162,7 @@ function ChatPanel({ selectedGroupId }) {
         try {
           const token = localStorage.getItem('token_ulogovanog');
           
-          await axios.put(`/api/messages/${editingMessage}`, 
+          const response =await axios.put(`/api/messages/${editingMessage}`, 
             { content: editMessageContent },
             { 
               headers: {
@@ -163,12 +170,14 @@ function ChatPanel({ selectedGroupId }) {
                 'Content-Type': 'application/json'
               }
             }
+
           );
+
           
           // Ažuriranje lokalne liste poruka
           setMessages(prevMessages => 
             prevMessages.map(msg => 
-              msg.id === editingMessage ? { ...msg, content: editMessageContent } : msg
+              msg.id === editingMessage ? response.data.message : msg
             )
           );
           
@@ -180,18 +189,179 @@ function ChatPanel({ selectedGroupId }) {
           console.error("Greška pri editovanju poruke:", error.response || error.message);
         }
       };
+      const handleDeleteGroup = async (groupId) => {
+        try {
+            
+            if (!window.confirm("Da li ste sigurni da želite da obrišete ovu grupu?")) {
+              return;
+            }
+            
+            const token = localStorage.getItem('token_ulogovanog');
+            
+             await axios.delete(`/api/groups/${groupId}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            onGroupDeleted(null);
+      
+            // Resetuj lokalno stanje
+            setGroupName("Izaberite grupu");
+            setMessages([]);
+            
+           
+          } catch (error) {
+            console.error("Greška pri brisanju grupe:", error.response || error.message);
+          }   
+    }
+
       const onEmojiClick = (emojiObject) => {
         setMessage(prevMessage => prevMessage + emojiObject.emoji);
         
         setShowEmojiPicker(false);
       };
+      const onEditEmojiClick = (emojiObject) => {
+        setEditMessageContent(prevContent => prevContent + emojiObject.emoji);
+        setShowEditEmojiPicker(false);
+      };
 
       const handleSearchToggle = () => {
-        setIsSearchVisible(!isSearchVisible);
+        if (selectedGroupId) {
+          setIsSearchVisible(!isSearchVisible);
+        } else {
+          alert("Morate prvo izabrati grupu.");
+         
+        }
+        
       };
+      const handleDeleteToggle=()=> {
+        if (selectedGroupId) {
+          handleDeleteGroup(selectedGroupId);
+        } else {
+          alert("Morate prvo izabrati grupu.");
+         
+        }
+      };
+
+      const handleLeaveToggle =()=>{
+        if (selectedGroupId) {
+          handleLeaveGroup(currentUser.id, selectedGroupId);
+        } else {
+          alert("Morate prvo izabrati grupu.");
+         
+        }
+      }
+
+
       const handleSearchResults = (results) => {
         setFilteredMessages(results);
       };
+
+      const handleLeaveGroup= async (userId, groupId)=>{
+        try {
+            
+          if (!window.confirm("Da li ste sigurni da želite da napustite ovu grupu?")) {
+            return;
+          }
+          
+          const token = localStorage.getItem('token_ulogovanog');
+          
+           await axios.delete(`/api/groups/${userId}/${groupId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          onLeaveGroup(true);
+          // Resetuj lokalno stanje
+          setGroupName("Izaberite grupu");
+          setMessages([]);
+          
+        } catch (error) {
+          console.error("Greška pri napustanju grupe:", error.response || error.message);
+        }   
+
+      }
+      
+
+      const handleWallpapersToggle = () => {
+        if (selectedGroupId) {
+         
+         setOpenWallpapers(!openWallpapers);
+        } else {
+          alert("Morate prvo izabrati grupu.");
+         
+        }
+        
+      };
+            
+      const handleCloseWallpapers= () => {
+        setOpenWallpapers(false);
+        
+      };
+
+      useEffect(() => {
+        function handleClickOutside(event) {
+          if (wallpaperRef.current && !wallpaperRef.current.contains(event.target)) {
+            setOpenWallpapers(false);
+          }
+        }
+      
+        // Dodajemo event listener samo kada je komponenta otvorena
+        if (openWallpapers) {
+          document.addEventListener("mousedown", handleClickOutside);
+        }
+        
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, [openWallpapers]);
+
+      const handleSelectWallpaper =async(imageUrl) => {
+        
+        console.log("Odabrana slika:", imageUrl);
+        //postavlja sliku u bazu
+        try{
+          const response= await axios.post(`/api/groups/${selectedGroupId}/wallpaper`,{
+              wallpaper:imageUrl
+        });
+
+        console.log('Uspesno dodata pozadina:', response.data);
+
+        }catch(error){
+          console.error("Greška pri napustanju grupe:", error.response || error.message);
+        }
+        handleGetWallpaper();
+        setOpenWallpapers(false); // Zatvorite dialog nakon izbora
+      };
+     
+
+      const handleGetWallpaper = async() => {
+      //dohvata pozadinu iz baze
+        try{
+          const response= await axios.get(`/api/groups/${selectedGroupId}/wallpaper`);
+
+        
+          setWallpaperUrl(response.data.wallpaper);
+
+        }catch(error){
+          console.error("Greška pri dohvatanju pozadine:", error.response || error.message);
+        }
+
+      };
+
+      const handleDeleteWallpaper =async()=>{
+        try{
+          const response= await axios.delete(`/api/groups/${selectedGroupId}/wallpaper`);
+
+        
+          setWallpaperUrl(response.data.wallpaper);
+
+        }catch(error){
+          console.error("Greška pri brisanju pozadine:", error.response || error.message);
+        }
+      }
+      
 
   return (
     <div className='chat-panel-str'>
@@ -215,29 +385,56 @@ function ChatPanel({ selectedGroupId }) {
                 <SearchIcon />
             </Button>
            </Tooltip>
+
+            <WallpaperSelector    
+              open={openWallpapers}
+              onClose={handleCloseWallpapers}
+              onSelectWallpaper={handleSelectWallpaper}
+              onDeleteWallpaper= {handleDeleteWallpaper}
+            />
+                  
            <Tooltip title="Promeni pozadinu" arrow>
             <Button
                 className='change-wallpaper-button'
                 variant="contained"
-                //onClick={handleLogout}
+                onClick={handleWallpapersToggle}
                 size='small'
             >
                 <WallpaperIcon/>
             </Button>
             </Tooltip>
+
             <Tooltip title="Napusti grupu" arrow>
             <Button
                 className='leave-group-button'
                 variant="contained"
-                //onClick={handleLogout}
+                onClick={handleLeaveToggle}
                 size='small'
             >
                 <GroupRemoveIcon/>
             </Button>
             </Tooltip>
+            <Tooltip title="Obriši grupu" arrow>
+            <Button
+                className='delete-group-button'
+                variant="contained"
+                onClick={handleDeleteToggle}
+                size='small'
+            >
+                <DeleteIcon/>
+            </Button>
+            </Tooltip>
           </div>
         </div>
-        <div className='chat-window'>
+        
+        <div className="chat-window" style={{ 
+          backgroundImage: wallpaperUrl ? `url(${wallpaperUrl})` : 'none',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundColor: wallpaperUrl ? 'rgba(133, 163, 196, 0.43)' : 'transparent',
+          backgroundBlendMode: wallpaperUrl ? 'darken' : 'normal',
+          }}>
         {groupName === "Izaberite grupu" ? (
           <p className="no-messages">⬅ Kliknite na grupu u kojoj zelite chatovati!</p>
         ) : (
@@ -281,6 +478,7 @@ function ChatPanel({ selectedGroupId }) {
                               <div className="message-header">
                                 <span className="message-author">{msg.user?.username || 'Nepoznat'}</span>
                                 <span className="message-time">{formatDate(msg.created_at)}</span>
+                                {msg.created_at !== msg.updated_at && <span className="edited-label">(edited)</span>}
                               </div>
                               <div className="message-text">{msg.content}</div>
                             </div>
@@ -297,12 +495,29 @@ function ChatPanel({ selectedGroupId }) {
         <div className="edit-message-modal">
             <div className="edit-message-content">
             <h3>Izmena poruke</h3>
-            <textarea 
+            <div className='input-message-container-edit'>
+              <input className='input-message-edit'
+                type="text"
                 value={editMessageContent}
                 onChange={(e) => setEditMessageContent(e.target.value)}
-                rows="2"
+                placeholder="Unesite poruku"
             />
+
+             <button className="emoji-button" 
+              onClick={() => setShowEditEmojiPicker(!showEditEmojiPicker)}
+            >
+                <EmojiEmotionsOutlinedIcon />
+            </button>
+            {showEditEmojiPicker && (
+                <div className="emoji-picker-wrapper">
+                    <EmojiPicker onEmojiClick={onEditEmojiClick} />
+                </div>
+            )}
+            </div>
+            
+            
             <div className="modal-actions">
+              
                 <button onClick={() => {
                 setEditingMessage(null);
                 setEditMessageContent("");

@@ -33,6 +33,7 @@
 .buttons{
     display: flex;
     align-items: center;
+    
 }
 
 .search_field {
@@ -61,8 +62,16 @@
     border-radius: 8px !important;
     padding: 0.5rem 1rem !important; 
     min-width: auto !important;
+    margin-right: 5px !important;
 }
 
+.delete-group-button{
+    background-color: #e9e5ff !important;
+    color: #666 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1rem !important; 
+    min-width: auto !important;
+}
 
 
 .input-message{
@@ -77,6 +86,18 @@
     background-color: #ebe9fa;
     box-sizing: border-box;
     
+  }
+  .input-message-edit{
+     margin-top: 10px;
+    width: 100%;
+    padding: 3% 4%;
+    padding-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    font-size: 16px;
+    margin-right: 5px !important;
+    background-color: #ebe9fa;
+    box-sizing: border-box;
   }
   .send-message-button{
     background-color: #456db4 !important;
@@ -152,6 +173,12 @@
     font-size: 14px;
     word-break: break-word;
 }
+.edited-label {
+    margin-left: 2px !important;
+    color: #888;
+    font-size: 0.8em;
+    margin-top: 2px !important;
+  }
 
 /* Izmenjeni deo za message-actions-inline */
 .message-actions-inline {
@@ -215,10 +242,10 @@
   
   .edit-message-content {
     background: linear-gradient(120deg, #e2e8f3, #c6bde7);
-    padding: 10px;
+    padding: 20px 15px;
     border-radius: 15px;
     width: 80%;
-    max-width: 300px;
+    max-width: 330px;
     box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
   }
@@ -229,13 +256,7 @@
     margin-right: 5px !important;
   }
   
-  .edit-message-content textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-  }
+ 
   
   .modal-actions {
     display: flex;
@@ -245,9 +266,10 @@
   }
   
   .modal-actions button {
-    padding: 8px 16px;
+    padding: 5px 16px;
     border-radius: 10px;
     cursor: pointer;
+    font-family: 'Inter', sans-serif !important;
   }
   
   .modal-actions button:first-child {
@@ -273,6 +295,15 @@
         flex-grow: 1;
         width: 88%;
         margin-right: 5px !important;
+    }
+    .input-message-container-edit{
+        position: relative;
+        flex-grow: 1;
+        width: 100%;
+        margin-right: 5px !important;
+    }
+    .input-message-container-edit .emoji-button{
+        margin-top: 5px;
     }
    
     

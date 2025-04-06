@@ -68,19 +68,20 @@
 .user-info {
   flex: 1;
   padding-right: 10px;
+  padding-left: 12px;
 }
 
 .user-info h3 {
   color: #333;
   font-size: 1.25rem; 
   font-weight: bold;
-  text-align: center;
+  text-align: left;
 }
 
 .user-info p {
   color: #000000;
   font-size: 1rem ; 
-  text-align: center;
+  text-align: left;
 }
 
 .logged-user-card p:last-child {
@@ -168,4 +169,6 @@
     flex-direction: column;
     align-items: flex-start;
   }
+ 
 }
+

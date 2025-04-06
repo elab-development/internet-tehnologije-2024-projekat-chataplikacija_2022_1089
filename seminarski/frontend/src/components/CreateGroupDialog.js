@@ -31,7 +31,7 @@ import { Select, MenuItem, FormControl, InputLabel,
         };
       
         return (
-          <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+          <Dialog open={open} onClose={onClose}  maxWidth='500px'>
             <DialogTitle>Napravite novu grupu</DialogTitle>
             <DialogContent>
               <TextField

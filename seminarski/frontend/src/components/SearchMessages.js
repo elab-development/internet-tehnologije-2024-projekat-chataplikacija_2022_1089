@@ -12,18 +12,12 @@ function SearchMessages({ messages, onSearchResults }) {
       setSearchTerm(term);
   
       if (term.trim() === '') {
-        // Ako je prazan unos, prikazi sve poruke
         onSearchResults(null);
         return;
       }
-  
-      // Filtriranje poruka koje sadrže traženi tekst
       const filteredMessages = messages.filter(msg => 
-        msg.content.toLowerCase().includes(term.toLowerCase()) || 
-        msg.user?.username.toLowerCase().includes(term.toLowerCase())
+        msg.content.toLowerCase().includes(term.toLowerCase())
       );
-  
-      // Prosleđivanje filtriranih rezultata roditeljskoj komponenti
       onSearchResults(filteredMessages);
     };
 
@@ -33,7 +27,7 @@ function SearchMessages({ messages, onSearchResults }) {
       component="form"
       sx={{ '& > :not(style)': {  width: '12ch',
         '& .MuiInputBase-root': {
-            fontSize: '0.8rem', 
+            fontSize: '0.6rem', 
         },
         '& .MuiInputLabel-root': {
             fontSize: '0.7rem', // labela

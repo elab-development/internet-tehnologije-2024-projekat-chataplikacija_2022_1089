@@ -10,7 +10,7 @@ import HopInGroup from './HopInGroup';
 
     
 
-    const LeftPanel = ({ onGroupSelect}) => {
+    const LeftPanel = ({ onGroupSelect, onLeaveGroup}) => {
       // eslint-disable-next-line no-unused-vars
       const [groupData, setGroupData] = useState({
           name: "",
@@ -93,6 +93,9 @@ import HopInGroup from './HopInGroup';
               }
             }
         };
+
+       
+  
         const handleUserSelect = (groupId) => {
           setSelectedGroupId(groupId);
         };
@@ -165,8 +168,11 @@ import HopInGroup from './HopInGroup';
           };
 
           useEffect(() => {
+            if(onLeaveGroup===true){
+              myGroups();
+            }
             myGroups(); 
-          }, [myGroups]); 
+          }, [myGroups, onLeaveGroup]); 
 
           useEffect(() => {
             updateDisplayedGroups(groups, currentPage);
@@ -245,8 +251,10 @@ import HopInGroup from './HopInGroup';
               ))}
             
             </div>
+            
             <div className="pagination-controls">
               <Tooltip title="Prethodna stranica" arrow>
+                <span>
               <Button 
                 onClick={goToPreviousPage} 
                 disabled={currentPage === 1}
@@ -257,11 +265,15 @@ import HopInGroup from './HopInGroup';
               >
                 <NavigateBeforeIcon />
               </Button>
+              </span>
               </Tooltip>
+
               <span className="page-indicator">
                 {currentPage} / {totalPages}
               </span>
+
               <Tooltip title="Sledeća stranica" arrow >
+                <span>
               <Button 
                 onClick={goToNextPage} 
                 disabled={currentPage === totalPages || totalPages === 0}
@@ -273,8 +285,10 @@ import HopInGroup from './HopInGroup';
               >
                 <NavigateNextIcon />
               </Button>
+              </span>
               </Tooltip>
             </div>
+           
           </div>
         </div>
       );

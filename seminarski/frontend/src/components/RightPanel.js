@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react'
 import { useNavigate  } from 'react-router-dom';
-import { Button, Tooltip } from '@mui/material';
+import { Button, Tooltip} from '@mui/material';
 import axios from 'axios';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -11,12 +11,14 @@ import MultipleSelectUsers from './MultipleSelectUsers';
 import { FaRegUserCircle } from "react-icons/fa";
 
 
-const RightPanel = ({ selectedGroupId }) => {
+
+const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
     
     const [groupUsers, setGroupUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedUserIds, setSelectedUserIds] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    
 
     useEffect(() => {
       if (selectedGroupId) {
@@ -97,11 +99,7 @@ const RightPanel = ({ selectedGroupId }) => {
           }
           
     }
-    const handleStatistic=(e) =>{
-
-      //statistikkaa
-      e.preventDefault();
-    }
+    
 
     const handleAddUserInGroup = async(e)=>{
             e.preventDefault();
@@ -134,19 +132,21 @@ const RightPanel = ({ selectedGroupId }) => {
   return (
     
     <div className='right-groups-panel'>
-      {/* Fiksni sadržaj koji se uvek prikazuje */}
+      
       <div className='right-panel-fixed-content'>
         <div className='header-right-panel'>
         <Tooltip title="Prikaz statistike" arrow>
         <Button
             className='statistic-button'
             variant="contained"
-            onClick={handleStatistic}
+            onClick={onStatisticsClick}
             size='small'
           >
             <AssessmentIcon />
           </Button>
         </Tooltip>
+       
+
         <Tooltip title="Odjavi se" arrow>
           <Button
             className='logout-button'
