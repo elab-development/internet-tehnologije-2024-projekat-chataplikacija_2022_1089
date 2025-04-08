@@ -104,15 +104,29 @@ export default function MultipleSelectUsers({ selectedGroupId, onUserSelect,user
   return (
     
       <FormControl sx={{ width: '100%', maxWidth:"100%" }}>
-        <InputLabel id="multiple-user-select-label">Korisnici</InputLabel>
+        <InputLabel id="multiple-user-select-label"sx={{
+      '&.MuiInputLabel-shrink': {
+        // Povećava prostor za labelu kada je smanjeno (pomereno gore)
+        transform: 'translate(14px, -7px) scale(0.69)',
+        
+      }
+    }}>Korisnici</InputLabel>
         <Select
           labelId="multiple-user-select-label"
           id="multiple-user-select"
           multiple
           value={selectedUserIds}
           onChange={handleChange}
-          input={<OutlinedInput label="Dodajte KORISNIKE" />}
+          input={<OutlinedInput label="Dodaj k" />}
           MenuProps={MenuProps}
+          sx={{
+            '& .MuiSelect-select': {
+              padding:'14px',
+              display: 'flex',
+              alignItems: 'center',
+              fontFamily:'Inter, sans-serif;', 
+            }
+          }}
         >
           {availableUsers.map((user) => (
             <MenuItem

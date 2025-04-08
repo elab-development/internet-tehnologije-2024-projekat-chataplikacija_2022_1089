@@ -9,7 +9,7 @@ import logo from '../user.png'
 import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
 import MultipleSelectUsers from './MultipleSelectUsers';
 import { FaRegUserCircle } from "react-icons/fa";
-
+import { useAlertDialog } from './AlertDialogContext';
 
 
 const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
@@ -18,7 +18,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
     const [loading, setLoading] = useState(false);
     const [selectedUserIds, setSelectedUserIds] = useState([]);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    
+    const { showConfirmDialog } = useAlertDialog();
 
     useEffect(() => {
       if (selectedGroupId) {
@@ -74,7 +74,15 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
     const handleLogout = async(e)=>{
         
         try {
+          const confirmed = await showConfirmDialog(
+            "Potvrda logout-a", 
+            "Da li ste sigurni da želite da izadjete iz aplikacije?"
+          );
           
+          
+          if (!confirmed) {
+            return;
+          }
             
             const token = localStorage.getItem('token_ulogovanog');
             
@@ -86,16 +94,14 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
               
               console.log("Korisnik uspešno odjavljen");
             }
-          } catch (error) {
-            console.error("Greška prilikom odjavljivanja:", error);
-          } finally {
-            // čistimo lokalno skladište i header
+
             localStorage.removeItem('token_ulogovanog');
             localStorage.removeItem('ulogovani_user');
-            
-            // Uklanjamo Authorization header
             delete axios.defaults.headers.common['Authorization'];
-            navigate('/'); 
+            navigate('/');
+
+          } catch (error) {
+            console.error("Greška prilikom odjavljivanja:", error);
           }
           
     }
@@ -176,9 +182,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
           </div>
         </div>
         
-        <div className='users-header'>
-          <h2>Korisnici grupe "{groupName}"</h2>
-        </div>
+        
         
         {selectedGroupId && (
           <div className="user-controls-container">
@@ -191,7 +195,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
                 refreshTrigger={refreshTrigger}
               />
             </div>
-            <Tooltip title="Dodaj korisnika" arrow>
+            <Tooltip title={`Dodaj korisnika/e u ${groupName}`} arrow>
             <Button
               className='add-user-button'
               variant="contained"
@@ -203,6 +207,9 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
             </Tooltip>
           </div>
         )}
+        <div className='users-header'>
+          <h2>Korisnici grupe "{groupName}"</h2>
+        </div>
       </div>
       
       {selectedGroupId ? (

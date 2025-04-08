@@ -36,8 +36,20 @@
     
 }
 
-.search_field {
-    margin-right: 10px !important;
+.closeSearchButton{
+    background-color: transparent;
+    color: #456db4;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.closeSearchButton:hover{
+    background-color: #e4ebf9;
 }
 .search-button{
     background-color: #e9e5ff !important;
@@ -315,14 +327,41 @@
         background: none;
         border: none;
         cursor: pointer;
-        color: #f3b05f;
+        color: #0000008f;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 5px;
         z-index: 2;
     }
-    
+
+    .gif-button{
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #010101;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        z-index: 2;
+    }
+    .gif-button:hover{
+        background-color: #e1def6;
+        border-radius: 20px;
+        border: none;
+    }
+    .message-gif {
+        max-width: 250px;
+        max-height: 200px;
+        border-radius: 8px;
+        margin: 5px 0;
+      }
+
     .emoji-button:hover {
         background-color: #e1def6;
         border-radius: 20px;

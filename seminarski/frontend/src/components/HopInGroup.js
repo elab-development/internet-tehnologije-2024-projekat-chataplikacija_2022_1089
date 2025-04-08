@@ -86,7 +86,14 @@ const handleGroupChange = (event) => {
 
   return (
     <FormControl fullWidth>
-    <InputLabel id="demo-simple-select-label">Pridružite se grupi</InputLabel>
+    <InputLabel id="demo-simple-select-label"
+    sx={{
+      '&.MuiInputLabel-shrink': {
+        // Povećava prostor za labelu kada je smanjeno (pomereno gore)
+        transform: 'translate(14px, -8px) scale(0.69)',
+        
+      }
+    }}>Pridružite se grupi</InputLabel>
     <Select
         labelId="demo-simple-select-label"
         id="demo-simple-select"
@@ -100,9 +107,10 @@ const handleGroupChange = (event) => {
           }}
           sx={{
             '& .MuiSelect-select': {
+              padding:'13px',
               display: 'flex',
               alignItems: 'center',
-              fontFamily:'Inter, sans-serif;'
+              fontFamily:'Inter, sans-serif;', 
             }
           }}
          

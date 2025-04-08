@@ -23,7 +23,7 @@ const WallpaperSelector = ({ open, onClose, onSelectWallpaper, onDeleteWallpaper
   const [selectedTheme, setSelectedTheme] = useState('nature');
   const [error, setError] = useState(null);
 
-  // Lista tema za pozadinu
+  
   const themes = [
     { value: 'nature', label: 'Priroda' },
     { value: 'sea beach', label: 'More i plaže' },
@@ -44,7 +44,7 @@ const WallpaperSelector = ({ open, onClose, onSelectWallpaper, onDeleteWallpaper
     setError(null);
     
     try {
-      // Napomena: API ključ bi trebalo čuvati na serveru, ovo je samo za demonstraciju
+      
       const UNSPLASH_ACCESS_KEY = 'mRXlG4Wj2916oJm8RRfdXw50fkeYSDn0cDL69JMneb4';
       
       const response = await axios.get('https://api.unsplash.com/search/photos', {

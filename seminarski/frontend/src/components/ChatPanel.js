@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useCallback} from 'react'
 import "../styles/ChatPanel.css";
 import SearchIcon from '@mui/icons-material/Search';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import { Button, Avatar, Tooltip } from '@mui/material';
+import { Button, Avatar, Tooltip, Box, IconButton, MenuItem } from '@mui/material';
 import axios from 'axios';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
@@ -13,7 +13,12 @@ import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined
 import SearchMessages from './SearchMessages';
 import DeleteIcon from '@mui/icons-material/Delete';
 import WallpaperSelector from './WallpaperSelector';
-
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
+import { useAlertDialog } from './AlertDialogContext';
+import CloseIcon from '@mui/icons-material/Close';
+import GifSelector from './GifSelector';
+import GifIcon from '@mui/icons-material/Gif';
 
 function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
 
@@ -27,11 +32,26 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
     const [editMessageContent, setEditMessageContent] = useState("");
     const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    //const [showGifPicker, setShowGifPicker] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [openWallpapers, setOpenWallpapers] = useState(false);
-      const wallpaperRef=useRef(null);
+    const [openGifPicker, setOpenGifPicker] = useState(false);
+    const wallpaperRef=useRef(null);
     const [filteredMessages, setFilteredMessages] = useState(null);
     const [wallpaperUrl, setWallpaperUrl] = useState('');
+    const { showConfirmDialog, showAlertDialog } = useAlertDialog();
+
+
+    const handleGetWallpaper = useCallback(async () => {
+      // dohvata pozadinu iz baze
+      if (!selectedGroupId) return;
+      try {
+        const response = await axios.get(`/api/groups/${selectedGroupId}/wallpaper`);
+        setWallpaperUrl(response.data.wallpaper);
+      } catch (error) {
+        console.error("Greška pri dohvatanju pozadine:", error.response || error.message);
+      }
+    }, [selectedGroupId]);
 
     
     useEffect(() => {
@@ -67,9 +87,8 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         fetchMessages();
         handleGetWallpaper(); 
        
-    }, [selectedGroupId]);
+    }, [selectedGroupId, handleGetWallpaper]);
 
-    // Dohvati trenutnog korisnika
     useEffect(() => {
         const fetchCurrentUser = async () => {
             try {
@@ -92,7 +111,8 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         };
     
-    const handleSendMessage = async () => {
+    const handleSendMessage = async (customMessage=null) => {
+      /*
         if (!message.trim() || !selectedGroupId) return;
         const token=localStorage.getItem('token_ulogovanog');
         if (!token) {
@@ -113,19 +133,57 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             setMessage(""); 
         } catch (error) {
             console.error("Greška pri slanju poruke:", error.response || error.message);
-        }
+        }*/
+            const messageToSend = customMessage || message;
+  
+            if (!messageToSend.trim() || !selectedGroupId) return;
+            
+            const token = localStorage.getItem('token_ulogovanog');
+            if (!token) {
+              console.error('Token nije pronađen');
+              return;
+            }
+            
+            try {
+              const response = await axios.post(`/api/messages/${selectedGroupId}`, {
+                content: messageToSend
+              }, {
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+              
+              const newMessage = response.data.message;
+              setMessages(prevMessages => [...prevMessages, newMessage]);
+              
+              // Resetujemo input polje samo ako šaljemo poruku iz input polja
+              if (!customMessage) {
+                setMessage("");
+              }
+            } catch (error) {
+              console.error("Greška pri slanju poruke:", error.response || error.message);
+            }
+
     };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
+
+   
     const handleDeleteMessage = async (messageId) => {
         try {
             
-            if (!window.confirm("Da li ste sigurni da želite da obrišete ovu poruku?")) {
-              return;
-            }
+          const confirmed = await showConfirmDialog(
+            "Potvrda brisanja", 
+            "Da li ste sigurni da želite da obrišete ovu poruku?"
+          );
+          
+          
+          if (!confirmed) {
+            return;
+          }
             
             const token = localStorage.getItem('token_ulogovanog');
             
@@ -174,14 +232,14 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
           );
 
           
-          // Ažuriranje lokalne liste poruka
+         
           setMessages(prevMessages => 
             prevMessages.map(msg => 
               msg.id === editingMessage ? response.data.message : msg
             )
           );
           
-          // Resetujemo stanje editovanja
+          
           setEditingMessage(null);
           setEditMessageContent("");
           
@@ -192,9 +250,16 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
       const handleDeleteGroup = async (groupId) => {
         try {
             
-            if (!window.confirm("Da li ste sigurni da želite da obrišete ovu grupu?")) {
-              return;
-            }
+            
+          const confirmed = await showConfirmDialog(
+            "Potvrda brisanja", 
+            "Da li ste sigurni da želite da obrišete ovu grupu?"
+          );
+          
+          
+          if (!confirmed) {
+            return;
+          }
             
             const token = localStorage.getItem('token_ulogovanog');
             
@@ -204,11 +269,12 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
               }
             });
             onGroupDeleted(null);
+            onLeaveGroup(true);
       
             // Resetuj lokalno stanje
             setGroupName("Izaberite grupu");
             setMessages([]);
-            
+            setWallpaperUrl(null);
            
           } catch (error) {
             console.error("Greška pri brisanju grupe:", error.response || error.message);
@@ -220,34 +286,50 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         
         setShowEmojiPicker(false);
       };
+     
+        
+
       const onEditEmojiClick = (emojiObject) => {
         setEditMessageContent(prevContent => prevContent + emojiObject.emoji);
         setShowEditEmojiPicker(false);
       };
 
-      const handleSearchToggle = () => {
+      const handleSearchToggle = async() => {
         if (selectedGroupId) {
           setIsSearchVisible(!isSearchVisible);
         } else {
-          alert("Morate prvo izabrati grupu.");
+          await showAlertDialog(
+            "Upozorenje", 
+            "Morate prvo da izaberete grupu!"
+          );
          
         }
-        
       };
-      const handleDeleteToggle=()=> {
+      const handleCloseSearchToggle=()=>{
+        if (selectedGroupId) {
+          setIsSearchVisible(false);
+        }
+      }
+      const handleDeleteToggle= async()=> {
         if (selectedGroupId) {
           handleDeleteGroup(selectedGroupId);
         } else {
-          alert("Morate prvo izabrati grupu.");
-         
+          await showAlertDialog(
+            "Upozorenje", 
+             "Morate prvo da izaberete grupu!"
+          );
+        
         }
       };
 
-      const handleLeaveToggle =()=>{
+      const handleLeaveToggle =async()=>{
         if (selectedGroupId) {
           handleLeaveGroup(currentUser.id, selectedGroupId);
         } else {
-          alert("Morate prvo izabrati grupu.");
+          await showAlertDialog(
+            "Upozorenje", 
+             "Morate prvo da izaberete grupu!"
+          );
          
         }
       }
@@ -260,7 +342,13 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
       const handleLeaveGroup= async (userId, groupId)=>{
         try {
             
-          if (!window.confirm("Da li ste sigurni da želite da napustite ovu grupu?")) {
+          const confirmed = await showConfirmDialog(
+            "Potvrda", 
+            "Da li ste sigurni da želite da napustite ovu grupu?"
+          );
+          
+          
+          if (!confirmed) {
             return;
           }
           
@@ -284,12 +372,15 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
       }
       
 
-      const handleWallpapersToggle = () => {
+      const handleWallpapersToggle = async () => {
         if (selectedGroupId) {
          
          setOpenWallpapers(!openWallpapers);
         } else {
-          alert("Morate prvo izabrati grupu.");
+          await showAlertDialog(
+            "Upozorenje", 
+             "Morate prvo da izaberete grupu!"
+          );
          
         }
         
@@ -299,7 +390,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         setOpenWallpapers(false);
         
       };
-
+   
       useEffect(() => {
         function handleClickOutside(event) {
           if (wallpaperRef.current && !wallpaperRef.current.contains(event.target)) {
@@ -317,6 +408,8 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         };
       }, [openWallpapers]);
 
+    
+
       const handleSelectWallpaper =async(imageUrl) => {
         
         console.log("Odabrana slika:", imageUrl);
@@ -332,23 +425,9 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
           console.error("Greška pri napustanju grupe:", error.response || error.message);
         }
         handleGetWallpaper();
-        setOpenWallpapers(false); // Zatvorite dialog nakon izbora
+        setOpenWallpapers(false); 
       };
      
-
-      const handleGetWallpaper = async() => {
-      //dohvata pozadinu iz baze
-        try{
-          const response= await axios.get(`/api/groups/${selectedGroupId}/wallpaper`);
-
-        
-          setWallpaperUrl(response.data.wallpaper);
-
-        }catch(error){
-          console.error("Greška pri dohvatanju pozadine:", error.response || error.message);
-        }
-
-      };
 
       const handleDeleteWallpaper =async()=>{
         try{
@@ -361,69 +440,178 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
           console.error("Greška pri brisanju pozadine:", error.response || error.message);
         }
       }
+      const [anchorEl, setAnchorEl] = React.useState(null);
+      const openMenu = Boolean(anchorEl);
+      const handleClickMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+      const handleCloseMenu = () => {
+        setAnchorEl(null);
+      };
+      const handleSearchAction = () => {
+        handleSearchToggle(); 
+        handleCloseMenu();
+      };
       
+      const handleWallpaperAction = () => {
+        handleWallpapersToggle(); 
+        handleCloseMenu();
+      };
+      
+      const handleLeaveAction = () => {
+        handleLeaveToggle(); 
+        handleCloseMenu();
+      };
+      
+      const handleDeleteAction = () => {
+        handleDeleteToggle(); 
+        handleCloseMenu();
+      };
+
+      const handleOpenGifPicker = () => {
+        setOpenGifPicker(true);
+      };
+      
+      const handleCloseGifPicker = () => {
+        setOpenGifPicker(false);
+      };
+      const handleSelectGif = (gifUrl) => {
+        handleSendMessage(`[GIF]${gifUrl}`);
+  
+        console.log("Odabrani GIF:", gifUrl);
+        //setMessage(prevMessage => prevMessage + ' ' + gifUrl + ' ');
+        setOpenGifPicker(false);
+      };
 
   return (
     <div className='chat-panel-str'>
         <div className='chat-panel-header'>
             <h2>{groupName}</h2> 
             <div className='buttons'>
-              {isSearchVisible && (
-                  <div className='search_field'>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+            {isSearchVisible && (
+                  <div className='search_field' style={{ display: 'flex', alignItems:'center' }} >
                       <SearchMessages 
                         messages={messages}
                         onSearchResults={handleSearchResults}
                       />
+                      <Tooltip title={"Zatvori"} arrow>
+                      <button className='closeSearchButton' onClick={handleCloseSearchToggle}><CloseIcon/></button></Tooltip>
                   </div>
+                  
               )}
-              <Tooltip title="Pretraži poruke" arrow>
-                <Button className='search-button'
-                variant="contained"
-                onClick={handleSearchToggle}
-                size='small'
-            >
-                <SearchIcon />
-            </Button>
-           </Tooltip>
-
-            <WallpaperSelector    
+              <Tooltip title="Opcije" arrow>
+              <IconButton
+                onClick={handleClickMenu}
+                size="small"
+                sx={{ mr: 2 }}
+                aria-controls={openMenu ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMenu ? 'true' : undefined}
+              >
+                <MoreVertIcon />
+              </IconButton></Tooltip>
+          </Box>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={openMenu}
+            onClose={handleCloseMenu}
+            
+            slotProps={{
+              paper: {
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  width:'250px',
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: 0,
+                    mr: 0,
+                  },
+                  '&::before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 10,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={handleSearchAction} sx={{ 
+                pl: 3, 
+                pr: 1,
+                py: 1, 
+                gap:1,
+                width: '100%', 
+                '& .MuiSvgIcon-root': { 
+                  pr: 1,
+                  fontSize:27, 
+                }
+              }}>
+              <SearchIcon /> Pretraži poruke
+            </MenuItem>
+            <MenuItem onClick={handleWallpaperAction} sx={{ 
+                pl: 3, 
+                pr: 1, 
+                py: 1, 
+                gap:1,
+                width: '100%', 
+                '& .MuiSvgIcon-root': { 
+                  pr: 1, 
+                  fontSize:27,
+                }
+              }}>
+              <WallpaperIcon/> Promeni pozadinu 
+            </MenuItem>
+            <MenuItem onClick={handleLeaveAction} sx={{ 
+                pl: 3.3, 
+                pr: 1, 
+                py: 1, 
+                gap:1,
+                width: '100%', 
+                '& .MuiSvgIcon-root': { 
+                  pr: 1,
+                  fontSize:27,
+                }
+              }}>
+              <GroupRemoveIcon/> Napusti grupu
+            </MenuItem>
+            <MenuItem onClick={handleDeleteAction} sx={{ 
+                pl: 3, 
+                pr: 1, 
+                py: 1, 
+                gap:1,
+                width: '100%', 
+                '& .MuiSvgIcon-root': { 
+                  pr:1,
+                  fontSize:27,
+                }
+                
+              }}>
+              <DeleteIcon /> Obriši grupu
+            </MenuItem>
+          </Menu>
+              
+               <WallpaperSelector    
               open={openWallpapers}
               onClose={handleCloseWallpapers}
               onSelectWallpaper={handleSelectWallpaper}
               onDeleteWallpaper= {handleDeleteWallpaper}
             />
-                  
-           <Tooltip title="Promeni pozadinu" arrow>
-            <Button
-                className='change-wallpaper-button'
-                variant="contained"
-                onClick={handleWallpapersToggle}
-                size='small'
-            >
-                <WallpaperIcon/>
-            </Button>
-            </Tooltip>
-
-            <Tooltip title="Napusti grupu" arrow>
-            <Button
-                className='leave-group-button'
-                variant="contained"
-                onClick={handleLeaveToggle}
-                size='small'
-            >
-                <GroupRemoveIcon/>
-            </Button>
-            </Tooltip>
-            <Tooltip title="Obriši grupu" arrow>
-            <Button
-                className='delete-group-button'
-                variant="contained"
-                onClick={handleDeleteToggle}
-                size='small'
-            >
-                <DeleteIcon/>
-            </Button>
-            </Tooltip>
+              
           </div>
         </div>
         
@@ -459,18 +647,20 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
                             
                             {isOwnMessage && selectedMessage === msg.id && (
                               <div className="message-actions-inline">
+                                <Tooltip title="Obriši" arrow>
                                 <button className="delete-button" onClick={(e) => {
                                   e.stopPropagation();
                                     handleDeleteMessage(msg.id);
                                 }}>
                                   <DeleteOutlineRoundedIcon />
-                                </button>
+                                </button></Tooltip>
+                                <Tooltip title="Edituj" arrow>
                                 <button className="edit-message-button" onClick={(e) => {
                                   e.stopPropagation();
                                     handleEditMessage(msg.id);
                                 }}>
                                   <EditIcon />
-                                </button>
+                                </button></Tooltip>
                               </div>
                             )}
                             
@@ -480,7 +670,19 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
                                 <span className="message-time">{formatDate(msg.created_at)}</span>
                                 {msg.created_at !== msg.updated_at && <span className="edited-label">(edited)</span>}
                               </div>
-                              <div className="message-text">{msg.content}</div>
+                              <div className="message-text">
+
+                              {msg.content.startsWith('[GIF]') ? (
+                                <img 
+                                  src={msg.content.substring(5)} 
+                                  alt="GIF" 
+                                  className="message-gif"
+                                  style={{ maxWidth: '250px', borderRadius: '8px' }}
+                                />
+                              ) : (
+                                msg.content
+                              )}
+                              </div>
                             </div>
                           </div>
                         );
@@ -541,11 +743,24 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
                 
             />
             <button 
+                className="gif-button" 
+                onClick={handleOpenGifPicker}
+            >
+                <GifIcon />
+            </button>
+            <button 
                 className="emoji-button" 
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
                 <EmojiEmotionsOutlinedIcon />
             </button>
+            
+           <GifSelector 
+              open={openGifPicker}
+              onClose={handleCloseGifPicker}
+              onSelectGif={handleSelectGif}
+            />
+             
             {showEmojiPicker && (
                 <div className="emoji-picker-wrapper">
                     <EmojiPicker onEmojiClick={onEmojiClick} />

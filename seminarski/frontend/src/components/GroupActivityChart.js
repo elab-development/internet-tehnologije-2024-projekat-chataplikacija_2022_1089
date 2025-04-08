@@ -70,7 +70,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
     fetchGroupActivity();
   }, []);
  
-  // Funkcija za generisanje različitih boja za stubove grafikona
+ 
   const getRandomColors = (count) => {
     const colors = [];
     for (let i = 0; i < count; i++) {
@@ -83,7 +83,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
 
   if (loading) {
     return (
-      <Card elevation={3} sx={{ maxWidth: 600, margin: 'auto' }}>
+      <Card elevation={3} sx={{ width: '100%', margin: 'auto' }}>
         <CardHeader title="Učitavanje aktivnosti grupa" />
         <CardContent sx={{ display: 'flex', justifyContent: 'center', padding: 4 }}>
           <CircularProgress />
@@ -94,7 +94,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
 
   if (error) {
     return (
-      <Card elevation={3} sx={{ maxWidth: 600, margin: 'auto' }}>
+      <Card elevation={3} sx={{ width: '100%', margin: 'auto' }}>
         <CardHeader title="Greška" />
         <CardContent>
           <Typography variant="body2" color="error" align="center">
@@ -107,7 +107,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
 
   if (activityData.length === 0) {
     return (
-      <Card elevation={3} sx={{ maxWidth: 600, margin: 'auto' }}>
+      <Card elevation={3} sx={{ width: '100%', margin: 'auto' }}>
         <CardHeader title="Aktivnost Grupa" subheader="Broj poruka po grupama" />
         <CardContent>
           <Typography variant="body2" color="textSecondary" align="center">
@@ -119,15 +119,14 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
   }
 
   return (
-    <Card elevation={3} sx={{ maxWidth: 600, margin: 'auto', textAlign:'center'}}>
+    <Card elevation={3} sx={{ width: '100%', margin: 'auto', textAlign:'center', overflow:'hidden'}}>
       <CardHeader 
         title="Aktivnost Grupa" 
         subheader="Broj poruka po grupama" 
-        //titleTypographyProps={{ align: 'center' }}
-        //subheaderTypographyProps={{ align: 'center' }}
+        
       />
-      <CardContent>
-        <Box sx={{ width: '100%', height: 400 }}>
+      <CardContent >
+        <Box sx={{ width: '100%', height: 328 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={activityData}
@@ -143,7 +142,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
                 dataKey="name" 
                 angle={-45} 
                 textAnchor="end"
-                height={70}
+                height={50}
                 tick={{ fontSize: 12 }}
               />
               <YAxis 

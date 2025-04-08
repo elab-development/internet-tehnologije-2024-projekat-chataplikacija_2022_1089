@@ -4,15 +4,15 @@ import LeftPanel from "./LeftPanel";
 import RightPanel from "./RightPanel";
 import ChatPanel from "./ChatPanel";
 import GroupActivityChart from './GroupActivityChart';
-import { Typography, Box
- } from "@mui/material";
-
+import { Typography, Box} from "@mui/material";
+import { AlertDialogProvider } from './AlertDialogContext';
 
 const GlavnaStr = () => {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [showStatistics, setShowStatistics] = useState(false);
-  const[maxPoruka, setMaxPoruka] =useState(null);
+  const [maxPoruka, setMaxPoruka] =useState(null);
   const [leaveGroup, setLeaveGroup] = useState(false);
+
   const handleMaxGroupFound = (maxGroup) => {
     setMaxPoruka(maxGroup);
   };
@@ -23,10 +23,11 @@ const GlavnaStr = () => {
 
   return (
     <div className="container">
-      <div className="left-panel"><LeftPanel onGroupSelect={setSelectedGroupId} onLeaveGroup={leaveGroup}/> </div>
-      <div className="chat-panel"><ChatPanel selectedGroupId={selectedGroupId} onGroupDeleted={(newValue) => setSelectedGroupId(newValue)} onLeaveGroup={setLeaveGroup} /></div>
-      <div className="right-panel"><RightPanel selectedGroupId={selectedGroupId} onStatisticsClick={toggleStatistics} /></div>
-   
+      <AlertDialogProvider>
+        <div className="left-panel"><LeftPanel onGroupSelect={setSelectedGroupId} onLeaveGroup={leaveGroup}/> </div>
+        <div className="chat-panel"><ChatPanel selectedGroupId={selectedGroupId} onGroupDeleted={(newValue) => setSelectedGroupId(newValue)} onLeaveGroup={setLeaveGroup} /></div>
+        <div className="right-panel"><RightPanel selectedGroupId={selectedGroupId} onStatisticsClick={toggleStatistics} /></div>
+      </AlertDialogProvider>
 
       {showStatistics && (
         <div className="statistics-overlay" onClick={() => setShowStatistics(false)}>

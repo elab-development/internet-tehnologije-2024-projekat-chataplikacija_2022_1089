@@ -42,7 +42,7 @@ import { Select, MenuItem, FormControl, InputLabel,
                 type="text"
                 fullWidth
                 variant="outlined"
-                error={!!error.name} // Postavi crvenu ivicu ako postoji greška
+                error={!!error.name} 
                 helperText={error.name} 
                 value={groupData.name}
                 onChange={handleInput}
