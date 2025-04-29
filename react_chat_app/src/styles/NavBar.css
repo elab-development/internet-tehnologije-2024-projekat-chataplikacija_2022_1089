@@ -1,0 +1,66 @@
+
+.navbar {
+    background-color: #2d4f74;
+    padding: 1rem 3.5rem;
+    color: white;
+    
+    
+  }
+  
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    
+  }
+  
+  .navbar li {
+    display: flex;
+    align-items: center; 
+    
+    
+  }
+  
+  .navbar a, .navbar button {
+    color: white;
+    text-decoration: none !important;
+    display: flex; /* Omogućava postavljanje ikone i teksta u jedan red */
+    gap:8px; 
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s, transform 0.3s; 
+    
+  }
+  
+  .navbar a:hover, .navbar button:hover {
+    background-color:#24415f;
+    border-radius: 5px;
+    transform: scale(1.05); /* Povećava dugme na hover */
+  }
+  
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    background-color: #1f3751;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s; /* Glatka promena boje pri hover-u */
+  }
+  
+  .logout-btn:hover {
+    background-color: #982e2e  !important;
+  }
+  
+  /* Stilizacija ikona u navbaru */
+  .navbar a svg, .navbar button svg {
+    font-size: 24px; 
+    transition: transform 0.3s; 
+  }
+  
+  .navbar a:hover svg, .navbar button:hover svg {
+    transform: rotate(360deg); 
+  }
+  
