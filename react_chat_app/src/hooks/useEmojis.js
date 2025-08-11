@@ -5,7 +5,7 @@ const useEmojis = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://emojihub.yurace.pro/api/all")
+    fetch("https://emoji-api.com/emojis?access_key=207c32d033df627e9dd524e88eea66cbb52b434e")
       .then((response) => response.json())
       .then((data) => {
         setEmojiList(data);

@@ -20,19 +20,18 @@ import CloseIcon from '@mui/icons-material/Close';
 import GifSelector from './GifSelector';
 import GifIcon from '@mui/icons-material/Gif';
 
-function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
+function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser }) {
 
     const [groupName, setGroupName] = useState("");
     const [message, setMessage] =useState("");
     const [messages, setMessages] = useState([]);
-    const [currentUser, setCurrentUser] = useState(null);
+    //const [currentUser, setCurrentUser] = useState(null);
     const messagesEndRef = useRef(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [editingMessage, setEditingMessage] = useState(null);
     const [editMessageContent, setEditMessageContent] = useState("");
     const [showEditEmojiPicker, setShowEditEmojiPicker] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    //const [showGifPicker, setShowGifPicker] = useState(false);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [openWallpapers, setOpenWallpapers] = useState(false);
     const [openGifPicker, setOpenGifPicker] = useState(false);
@@ -62,21 +61,31 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
 
 
         const fetchGroupName = async () => {
-            try {
-                const response = await axios.get('/api/groups'); 
-                const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
+         
+                try {
+            let response;
+        
                 
+                if (currentUser?.role === 'admin') {
+                    response = await axios.get('/api/admin/groups'); 
+                } else {
+                    response = await axios.get('/api/groups');
+                }
+                
+                const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
                 setGroupName(foundGroup?.name);
                 
             } catch (error) {
                 console.error("Greška pri dohvatanju imena grupe:", error);
                 setGroupName("(Izaberite grupu)");
-                }
+            }
             };
 
         const fetchMessages = async () => {
             try {
-              const response = await axios.get(`/api/messages/${selectedGroupId}`);
+              const response = await axios.get(`/api/messages/${selectedGroupId}`, {
+                withCredentials:true
+              });
               setMessages(response.data.messages);
             } catch (error) {
                console.error("Greška pri dohvatanju poruka:", error);
@@ -87,20 +96,9 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         fetchMessages();
         handleGetWallpaper(); 
        
-    }, [selectedGroupId, handleGetWallpaper]);
+    }, [selectedGroupId, handleGetWallpaper, currentUser]);
 
-    useEffect(() => {
-        const fetchCurrentUser = async () => {
-            try {
-                const response = await axios.get('/api/user');
-                setCurrentUser(response.data);
-            } catch (error) {
-                console.error("Greška pri dohvatanju korisnika:", error);
-            }
-        };
 
-         fetchCurrentUser();
-    }, []);
 
     // Automatski scroll na dno chata kada stižu nove poruke
         useEffect(() => {
@@ -112,32 +110,16 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         };
     
     const handleSendMessage = async (customMessage=null) => {
-      /*
-        if (!message.trim() || !selectedGroupId) return;
-        const token=localStorage.getItem('token_ulogovanog');
-        if (!token) {
-            console.error('Token nije pronađen');
-            return;
-        }
-        try {
-            const response=await axios.post(`/api/messages/${selectedGroupId}`, {
-                content: message
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            
-            });
-            const newMessage = response.data.message;
-            setMessages(prevMessages => [...prevMessages, newMessage]);
-            setMessage(""); 
-        } catch (error) {
-            console.error("Greška pri slanju poruke:", error.response || error.message);
-        }*/
-            const messageToSend = customMessage || message;
-  
-            if (!messageToSend.trim() || !selectedGroupId) return;
-            
+      
+          const messageToSend = customMessage !== null ? 
+            (typeof customMessage === 'string' ? customMessage : JSON.stringify(customMessage)) : 
+            message;
+
+            // Provjera da li je string i da li nije prazan
+            if (!messageToSend || typeof messageToSend !== 'string' ||
+               !messageToSend.trim() || !selectedGroupId) return;
+      
+          
             const token = localStorage.getItem('token_ulogovanog');
             if (!token) {
               console.error('Token nije pronađen');
@@ -146,17 +128,14 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             
             try {
               const response = await axios.post(`/api/messages/${selectedGroupId}`, {
-                content: messageToSend
-              }, {
-                headers: {
-                  'Authorization': `Bearer ${token}`
-                }
+                content: messageToSend},{
+                withCredentials: true
               });
               
               const newMessage = response.data.message;
               setMessages(prevMessages => [...prevMessages, newMessage]);
               
-              // Resetujemo input polje samo ako šaljemo poruku iz input polja
+              
               if (!customMessage) {
                 setMessage("");
               }
@@ -185,12 +164,11 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             return;
           }
             
-            const token = localStorage.getItem('token_ulogovanog');
+            
             
              await axios.delete(`/api/messages/${messageId}`, {
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
+             withCredentials:true
+              
             });
         
             setMessages(prevMessages => prevMessages.filter(msg => msg.id !== messageId));
@@ -210,23 +188,18 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
           if (message) {
             setEditingMessage(messageId);
             setEditMessageContent(message.content);
-            
-            // Zatvoriti meni sa opcijama
             setSelectedMessage(null);
           }
     }
 
     const submitEditMessage = async () => {
         try {
-          const token = localStorage.getItem('token_ulogovanog');
+         
           
           const response =await axios.put(`/api/messages/${editingMessage}`, 
             { content: editMessageContent },
             { 
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
+              withCredentials:true
             }
 
           );
@@ -261,17 +234,13 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             return;
           }
             
-            const token = localStorage.getItem('token_ulogovanog');
             
-             await axios.delete(`/api/groups/${groupId}`, {
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            });
+            
+             await axios.delete(`/api/groups/${groupId}`);
             onGroupDeleted(null);
             onLeaveGroup(true);
       
-            // Resetuj lokalno stanje
+           
             setGroupName("Izaberite grupu");
             setMessages([]);
             setWallpaperUrl(null);
@@ -361,7 +330,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
           });
           
           onLeaveGroup(true);
-          // Resetuj lokalno stanje
+          
           setGroupName("Izaberite grupu");
           setMessages([]);
           
@@ -413,7 +382,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
       const handleSelectWallpaper =async(imageUrl) => {
         
         console.log("Odabrana slika:", imageUrl);
-        //postavlja sliku u bazu
+        
         try{
           const response= await axios.post(`/api/groups/${selectedGroupId}/wallpaper`,{
               wallpaper:imageUrl
@@ -477,9 +446,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
       };
       const handleSelectGif = (gifUrl) => {
         handleSendMessage(`[GIF]${gifUrl}`);
-  
         console.log("Odabrani GIF:", gifUrl);
-        //setMessage(prevMessage => prevMessage + ' ' + gifUrl + ' ');
         setOpenGifPicker(false);
       };
 
@@ -563,6 +530,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
               }}>
               <SearchIcon /> Pretraži poruke
             </MenuItem>
+            {currentUser && currentUser.role !== 'guest' && (
             <MenuItem onClick={handleWallpaperAction} sx={{ 
                 pl: 3, 
                 pr: 1, 
@@ -576,6 +544,8 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
               }}>
               <WallpaperIcon/> Promeni pozadinu 
             </MenuItem>
+            )}
+            {currentUser && currentUser.role !== 'admin' &&(
             <MenuItem onClick={handleLeaveAction} sx={{ 
                 pl: 3.3, 
                 pr: 1, 
@@ -588,7 +558,8 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
                 }
               }}>
               <GroupRemoveIcon/> Napusti grupu
-            </MenuItem>
+            </MenuItem>)}
+            {currentUser && currentUser.role !== 'guest' && (
             <MenuItem onClick={handleDeleteAction} sx={{ 
                 pl: 3, 
                 pr: 1, 
@@ -602,7 +573,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
                 
               }}>
               <DeleteIcon /> Obriši grupu
-            </MenuItem>
+            </MenuItem>)}
           </Menu>
               
                <WallpaperSelector    
@@ -731,6 +702,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
         )}
 
         </div>
+        {currentUser && currentUser.role !== 'admin' &&(
         <div className='create-message-container'>
             <div className='input-message-container'>
             <input
@@ -770,12 +742,12 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup }) {
             <Button
                 className='send-message-button'
                 variant="contained"
-                onClick={handleSendMessage}
+                onClick={() => handleSendMessage()}
                 size='small'
             >
                 <SendIcon/>
             </Button>
-        </div>
+        </div>)}
     </div>
     
   )

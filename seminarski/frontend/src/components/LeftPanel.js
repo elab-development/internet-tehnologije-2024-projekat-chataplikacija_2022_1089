@@ -10,7 +10,7 @@ import HopInGroup from './HopInGroup';
 
     
 
-    const LeftPanel = ({ onGroupSelect, onLeaveGroup}) => {
+    const LeftPanel = ({ onGroupSelect, onLeaveGroup, currentUser}) => {
       // eslint-disable-next-line no-unused-vars
       const [groupData, setGroupData] = useState({
           name: "",
@@ -40,27 +40,27 @@ import HopInGroup from './HopInGroup';
         const groupsPerPage = 4;
         
         
-        const userDataString = localStorage.getItem('ulogovani_user');
-        let userId = null;
-        const userData = JSON.parse(userDataString);
-        userId = userData.id; 
+      //const userDataString = localStorage.getItem('ulogovani_user');
+        //let userId = null;
+        //const userData = JSON.parse(userDataString);
+        //userId = userData.id; 
         //console.log('Stored user ID:', userId);
-        if (!userId) {
-          console.error("Korisnik nije ulogovan..user data error");
-        }
         
 
         const handleAddGroup = async  (formData) => {
-
-          const groupExists = groups.some(group => group.name.toLowerCase() === formData.name.toLowerCase());
-
-          if (groupExists) {
-              setError({ name: 'Grupa sa tim imenom već postoji!' });
-              return; 
+          const checkResponse = await axios.get('/api/check-group-name', {
+            params: { name: formData.name }
+          });
+          
+          if (checkResponse.data.exists) {
+            setError({ name: 'Grupa sa tim imenom već postoji u bazi!' });
+            return;
           }
-            
+          let userIdd = currentUser?.id;
+          
+
             try {
-              const response= await axios.post(`/api/add-group/${userId}`,{
+              const response= await axios.post(`/api/add-group/${userIdd}`,{
               
                   name: formData.name,
                   description: formData.description,
@@ -104,9 +104,10 @@ import HopInGroup from './HopInGroup';
             if (!selectedGroupId) {
               return;
             }
+            let userIdd = currentUser?.id;
             try {
                await axios.post(`/api/groups/${selectedGroupId}/usersadd`, {
-                user_ids: [userId]
+                user_ids: [userIdd]
               });
           
               
@@ -124,23 +125,29 @@ import HopInGroup from './HopInGroup';
         }
         
 
-
+        const userIddd = currentUser?.id;
         const myGroups = useCallback( async()=>{
-          try {
-            if (!userId) {
-              console.error("Korisnik nije ulogovan..erorr mygroups");
-              return;
+        
+         try {
+            let response;
+    
+            
+            if (currentUser?.role === 'admin') {
+              response = await axios.get('/api/admin/groups'); 
+            } else {
+              
+              response = await axios.get(`/api/groups/${userIddd}/groups`);
             }
-            const response = await axios.get(`/api/groups/${userId}/groups`);
+            
             const myGroupsData = response.data.groups;
             setGroups(myGroupsData);
             setTotalPages(Math.ceil(myGroupsData.length / groupsPerPage));
             updateDisplayedGroups(myGroupsData, currentPage);
-        } catch (error) {
+          } catch (error) {
             console.error("Greška pri dohvatanju grupa:", error);
-                
           }
-        }, [currentPage, groupsPerPage, userId]);
+
+        }, [currentPage, groupsPerPage, userIddd, currentUser/* onLeaveGroup*/]);
 
         
 
@@ -197,23 +204,33 @@ import HopInGroup from './HopInGroup';
               >
               Dodaj novu grupu
               </Button>
-
-        <CreateGroupDialog
+        {currentUser && (
+          <CreateGroupDialog
           open={openDialog}
           onClose={handleCloseDialog}
           onSubmit={handleAddGroup}
           error={error}
+          role={currentUser.role} 
         />
+        )}
+        {currentUser && currentUser.role !== 'admin' && (
         <div className="group-controls-container">
             <div style={{flex:1, maxWidth:"75%"}}>
-              <HopInGroup
-                userId={userId}
+              {currentUser && (
+                
+                <HopInGroup
+                userId={currentUser?.id}
                 onGroupSelect={handleUserSelect}
                 onReset={setResetGroupSelection}
               />
-            </div>
+      
+              )}
+              </div>
+
+            {currentUser && (
             <Tooltip title="Pridruži se grupi" arrow>
-            <Button
+            
+              <Button
               className='hop-in-group-button'
               variant="contained"
               onClick={handleJoinGroup}
@@ -222,11 +239,12 @@ import HopInGroup from './HopInGroup';
             >
               <GroupsIcon/>
             </Button>
-            </Tooltip>
-          </div>
+            </Tooltip> 
+          )}
+          </div>)}
 
           <div className="groups_card">
-            <span className="list_header">Moje grupe</span>
+            <span className="list_header">{currentUser?.role === 'admin' ? 'Sve grupe' : 'Moje grupe'}</span>
             <div className="groups-list">
               {displayedGroups.map((group) => (
                   <div 

@@ -283,10 +283,10 @@ const ChatRoom = () => {
           emojiList.slice(0, 50).map((emojiData, index) => (
             <span
                key={index}
-              onClick={() => addEmojiToMessage(emojiData.emoji || String.fromCodePoint(parseInt(emojiData.htmlCode[0].replace('&#', '').replace(';', ''))))}
+              onClick={() => addEmojiToMessage(emojiData.character)}
               style={{ cursor: "pointer", fontSize: "20px", margin: "5px" }}
               >
-              {emojiData.emoji || String.fromCodePoint(parseInt(emojiData.htmlCode[0].replace('&#', '').replace(';', '')))}
+              {emojiData.character}
             </span>
           ))
         ) : (

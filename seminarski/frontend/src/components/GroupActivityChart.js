@@ -14,7 +14,8 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
  const [activityData, setActivityData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [maxMessageGroup, setMaxMessageGroup] = useState(null);
+
+  
  
   useEffect(() => {
     const fetchGroupActivity = async () => {
@@ -28,7 +29,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
         }
         
         const response = await axios.get('/api/group-activity', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          withCredentials:true
         });
         
         console.log("API Response:", response);
@@ -52,7 +53,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
               group.poruke > max.poruke ? group : max
             , formattedData[0]);
             
-            setMaxMessageGroup(maxGroup);
+            
             if (onMaxGroupFound) onMaxGroupFound(maxGroup);
             console.log("Grupa sa najvećim brojem poruka:", maxGroup);
           }
@@ -68,7 +69,7 @@ const GroupActivityChart = ({onMaxGroupFound}) => {
     };
 
     fetchGroupActivity();
-  }, []);
+  }, [onMaxGroupFound]);
  
  
   const getRandomColors = (count) => {

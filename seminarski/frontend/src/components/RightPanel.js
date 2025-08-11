@@ -12,7 +12,9 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { useAlertDialog } from './AlertDialogContext';
 
 
-const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
+const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
+  // console.log("RightPanel currentUser:", currentUser);
+   //console.log("Renderovanje desne komponente");
     
     const [groupUsers, setGroupUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
     
 
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("ulogovani_user"));
+    
     
     const [groupName, setGroupName] = useState("");
     
@@ -79,30 +81,28 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
             "Da li ste sigurni da želite da izadjete iz aplikacije?"
           );
           
-          
           if (!confirmed) {
             return;
           }
             
-            const token = localStorage.getItem('token_ulogovanog');
-            
-            if (token) {
-              axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+         if (currentUser?.role === 'admin') {
               
-              
-              await axios.post('api/logout');
-              
-              console.log("Korisnik uspešno odjavljen");
-            }
-
-            localStorage.removeItem('token_ulogovanog');
-            localStorage.removeItem('ulogovani_user');
-            delete axios.defaults.headers.common['Authorization'];
-            navigate('/');
-
-          } catch (error) {
-            console.error("Greška prilikom odjavljivanja:", error);
+              console.log("Admin se odjavlja");
+              localStorage.removeItem('ulogovani_user');
+              navigate('/');
           }
+          else {
+            await axios.post('/api/logout', {}, {
+              withCredentials: true
+          });
+
+          console.log("korisnik uspesno odjavljen");
+          localStorage.removeItem('ulogovani_user');
+          navigate('/');
+          }
+        } catch (error) {
+            console.error("Greška prilikom odjavljivanja:", error);
+        }
           
     }
     
@@ -141,16 +141,19 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
       
       <div className='right-panel-fixed-content'>
         <div className='header-right-panel'>
-        <Tooltip title="Prikaz statistike" arrow>
-        <Button
-            className='statistic-button'
-            variant="contained"
-            onClick={onStatisticsClick}
-            size='small'
-          >
-            <AssessmentIcon />
-          </Button>
-        </Tooltip>
+          { currentUser?.role === "admin" && (
+                <Tooltip title="Prikaz statistike" arrow>
+              <Button
+                  className='statistic-button'
+                  variant="contained"
+                  onClick={onStatisticsClick}
+                  size='small'
+                >
+                  <AssessmentIcon />
+                </Button>
+              </Tooltip>
+          )}
+    
        
 
         <Tooltip title="Odjavi se" arrow>
@@ -165,36 +168,48 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick }) => {
           </Tooltip>
         </div>
         
-        <div className='logged-user-card'>
-          <div className='user-info'>
-            <h3>Korisnički profil</h3>
-            <p><strong></strong> {user.username}</p>
-            {
-            user.role === 'user' && (
-              <p><strong>📧Email:</strong> {user.email}</p>
-            )
-          }
-           
+          <div className='logged-user-card'>
+            
+            <div className='user-info'>
+              <h3>Korisnički profil</h3>
+              {currentUser ? (
+                  <>
+                    <p><strong></strong> {currentUser.role === 'admin' ? 'Admin' : currentUser.username}</p>
+                    {currentUser.role === 'user' && (
+                      <p><strong>📧Email:</strong> {currentUser.email}</p>
+                    )}
+                    {currentUser.role === 'admin' && (
+                        <p><strong>👑Uloga:</strong> Administrator</p>
+                      )}
+                  </>
+                ) : (
+                  <p>Učitavanje korisničkih podataka...</p>
+                )}
+            
+            </div>
+            <div className='user-img'>
+              <img src={logo} alt="User Logo" style={{ width: "70px", height: "70px", 
+                borderRadius: "40px", objectFit: "cover", marginLeft: "5px" }} />
+            </div>
           </div>
-          <div className='user-img'>
-            <img src={logo} alt="User Logo" style={{ width: "70px", height: "70px", 
-              borderRadius: "40px", objectFit: "cover", marginLeft: "5px" }} />
-          </div>
-        </div>
+        
+
+       
         
         
         
-        {selectedGroupId && (
+        {selectedGroupId && currentUser.role !== "guest" && (
           <div className="user-controls-container">
             <div style={{flex:1, maxWidth:"75%"}}>
               <MultipleSelectUsers
                 selectedGroupId={selectedGroupId}
-                userId={user.id}
+                userId={currentUser.id}
                 onUserSelect={handleUserSelect}
                 selectedUserIds={selectedUserIds}
                 refreshTrigger={refreshTrigger}
               />
             </div>
+
             <Tooltip title={`Dodaj korisnika/e u ${groupName}`} arrow>
             <Button
               className='add-user-button'

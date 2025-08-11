@@ -27,7 +27,7 @@ class AuthController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:5|confirmed',
-            //'conformPass' => 'required|same:password' // Dodajte ovo
+            //'conformPass' => 'required|same:password' 
         ], [
             // Prilagođene poruke za greške
             'username.unique' => 'Korisničko ime je već zauzeto.',
@@ -70,18 +70,29 @@ class AuthController extends Controller
             ]);
         }
 
+        Auth::login($user);
+
         // Kreiranje tokena
-        $token = $user->createToken('auth_token')->plainTextToken;
+        //$token = $user->createToken('auth_token')->plainTextToken;
+        //
+       // $refreshToken = Str::random(60);
+
+        //$user->update([
+            //'refresh_token' => Hash::make($refreshToken),
+           // 'refresh_token_expiry' => now()->addDays(30) // 30 dana važenja
+       // ]);
 
         return Response::json([
-            'token' => $token,
+            //'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
                 'role' => $user->role
             ]
-        ]);
+            ]);;
+        
+
     }
 
 
@@ -103,29 +114,45 @@ class AuthController extends Controller
             'password' => null,
             'role' => 'guest'
         ]);
+        Auth::login($guestUser);
 
-        $token = $guestUser->createToken('guest_token')->plainTextToken;
+       // $token = $guestUser->createToken('auth_token')->plainTextToken;
 
         return Response::json([
-            'token' => $token,
+            
             'user' => [
                 'id' => $guestUser->id,
                 'username' => $guestUser->username,
                 'role' => $guestUser->role
             ]
         ], 201);
+
     }
 
     public function logout(Request $request)
     {
-        // Odjava - brisanje svih tokena
-        $request->user()->tokens()->delete();
-
+        
+        //$request->user()->tokens()->delete();
+    
+       
+        Auth::guard('web')->logout();
+        
+       
+        $request->session()->invalidate();
+        
+        
+        $request->session()->regenerateToken();
+    
         return response()->json(['message' => 'Uspešno ste se odjavili']);
+       
+        
+      
     }
 
     public function getCurrentUser(Request $request)
     {
         return response()->json($request->user());
+
+       
     }
 }

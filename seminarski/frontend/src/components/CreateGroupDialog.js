@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, 
     Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
-    const CreateGroupDialog = ({ open, onClose, onSubmit, error }) => {
+    const CreateGroupDialog = ({ open, onClose, onSubmit, error, role }) => {
         const [groupData, setGroupData] = useState({
           name: "",
           description: "",
@@ -34,6 +34,13 @@ import { Select, MenuItem, FormControl, InputLabel,
           <Dialog open={open} onClose={onClose}  maxWidth='500px'>
             <DialogTitle>Napravite novu grupu</DialogTitle>
             <DialogContent>
+              {role === 'guest' ? (
+                  <p>
+                    Gost korisnik nema dozvolu za kreiranje grupa.
+                  </p>
+                ) : (
+                  <>
+         
               <TextField
                 autoFocus
                 margin="dense"
@@ -74,10 +81,13 @@ import { Select, MenuItem, FormControl, InputLabel,
                   <MenuItem value="public">Javna</MenuItem>
                 </Select>
               </FormControl>
+            </>)}
             </DialogContent>
             <DialogActions>
               <Button onClick={onClose}>Otkaži</Button>
+              {role !== 'guest' &&(
               <Button onClick={handleSubmit} variant="contained">Kreiraj</Button>
+              )}
             </DialogActions>
           </Dialog>
         );

@@ -43,7 +43,10 @@ const Register = () => {
             email: userData.email,
             password: userData.password,
             password_confirmation: userData.conformPass 
-        });
+        },{
+          withCredentials: true
+        }
+      );
 
         console.log('Registracija uspešna:', response.data);
         navigate("/");

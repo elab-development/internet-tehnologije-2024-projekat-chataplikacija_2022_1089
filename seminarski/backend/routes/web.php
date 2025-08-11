@@ -18,3 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 //Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->json(['message' => 'CSRF cookie set']);
+});

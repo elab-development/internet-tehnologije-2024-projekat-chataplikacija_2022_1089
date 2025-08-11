@@ -16,23 +16,48 @@ class GroupsController extends Controller
         return response()->json(['groups' => $groups]);
     }
 
-    public function getGroups()
+    public function getGroups(Request $request)
     {
-        try {
 
+            try {
+        $user = $request->user();
+
+        if (!$user || $user->role === 'guest') {
+            // Ako korisnik nije ulogovan ili je guest, vraćamo samo javne grupe
+            $groups = Group::where('is_private', 0)->get();
+        } else {
+            // Za ostale korisnike vraćamo sve grupe
             $groups = Group::all();
+        }
 
-            return response()->json([
-                'status' => 'success',
-                'groups' => $groups
-            ], 200);
+        return response()->json([
+            'status' => 'success',
+            'groups' => $groups
+        ], 200);
         } catch (\Exception $e) {
-            return response()->json([
+             return response()->json([
                 'status' => 'error',
                 'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
             ], 500);
         }
+
     }
+    public function getGroupsForAdmin(Request $request) 
+        {
+            // Admin endpoint - vraća sve grupe bez provere autentifikacije
+            try {
+                $groups = Group::all();
+                return response()->json([
+                    'status' => 'success',
+                    'groups' => $groups
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
+                ], 500);
+            }
+        }
 
 
 
