@@ -8,6 +8,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HopInGroup from './HopInGroup';
 
+
     
 
     const LeftPanel = ({ onGroupSelect, onLeaveGroup, currentUser}) => {
@@ -133,7 +134,7 @@ import HopInGroup from './HopInGroup';
     
             
             if (currentUser?.role === 'admin') {
-              response = await axios.get('/api/admin/groups'); 
+              response = await axios.get('/api/groupsAdm'); 
             } else {
               
               response = await axios.get(`/api/groups/${userIddd}/groups`);
@@ -222,6 +223,7 @@ import HopInGroup from './HopInGroup';
                 userId={currentUser?.id}
                 onGroupSelect={handleUserSelect}
                 onReset={setResetGroupSelection}
+                currentUser={currentUser}
               />
       
               )}

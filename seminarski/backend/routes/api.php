@@ -48,8 +48,8 @@ Route::get('/check-group-name', function (Request $request) {
 
 Route::delete('/groups/{groupId}/wallpaper', [GroupsController::class, 'deleteWallpaper']);
 Route::get('/users', [UserController::class, 'getAllUsers']);
-Route::get('/admin/groups', [GroupsController::class, 'getGroupsForAdmin']);
-//Route::get('/groups', [GroupsController::class, 'getAllGroups']);
+//Route::get('/admin/groups', [GroupsController::class, 'getGroupsForAdmin']);
+Route::get('/groupsAdm', [GroupsController::class, 'getAllGroups']);
 Route::get('/groups/{groupId}/users', [GroupsController::class, 'getUsersByGroupId']);
 Route::get('/groups/{userId}/groups', [GroupsController::class, 'getGroupsByUserId']);
 Route::post('/groups/{groupId}/users', [GroupsController::class, 'updateGroupUsers']);
@@ -58,14 +58,16 @@ Route::delete('/groups/{userId}/{groupId}', [GroupsController::class, 'leaveGrou
 Route::delete('/groups/{groupId}', [GroupsController::class, 'deleteGroup']);
 Route::post('/groups/{groupId}/wallpaper', [GroupsController::class, 'addWallpaper']);
 Route::get('/groups/{groupId}/wallpaper', [GroupsController::class, 'getWallpaper']);
-
+Route::get('/group-activity', [GroupsController::class, 'getGroupActivity']);
+ Route::get('/messages/{groupId}', [MessageController::class, 'index']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/messages/{groupId}', [MessageController::class, 'index']);
+   
     Route::post('/messages/{groupId}', [MessageController::class, 'store']);
     Route::delete('messages/{message}', [MessageController::class, 'destroy']);
     Route::put('messages/{message}', [MessageController::class, 'edit']);
-    Route::get('/group-activity', [GroupsController::class, 'getGroupActivity']);
+    
 });
 
 

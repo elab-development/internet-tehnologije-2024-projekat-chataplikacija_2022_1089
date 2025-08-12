@@ -3,49 +3,42 @@ import React, {useState, useEffect, useCallback} from 'react'
 import axios from 'axios';
 import '../styles/HopInGroup.css';
 
-function HopInGroup({userId, onGroupSelect}) {
+function HopInGroup({userId, onGroupSelect, currentUser}) {
 const [allGroups, setAllGroups] = useState([]);
 const [loading, setLoading] = useState(true);
 const [selectedGroup, setSelectedGroup] = useState('');
 const [userGroups, setUserGroups] = useState([]);
 const [availableGroups, setAvailableGroups] = useState([]);
 
-const fetchAllGroups = async () => {
+const fetchAllGroups = useCallback(async () => {
+
+   if (!currentUser) {
+        console.log('currentUser is not available yet, skipping fetchAllGroups');
+        return;
+    }
     try {
-    const response = await axios.get('/api/groups');
-    setAllGroups(response.data.groups);
-    setLoading(false);
+    
+        const params = {
+            user_id: currentUser.id || currentUser.user_id,
+            user_role: currentUser.role || currentUser.user_role
+        };
+        
+        console.log('Sending params:', params);
+        
+        const response = await axios.get('/api/groups', {
+            params: params
+        });
+        
+        
+        setAllGroups(response.data.groups);
+        setLoading(false);
     } catch (error) {
     console.error('Greška pri dohvatanju grupa:', error);
     setLoading(false);
     }
-};
-const handleOpenSelect = () => {
-    // Osvežavanje obe liste svaki put kada se otvori select
-    fetchAllGroups()
-    fetchUserGroups()
-  }
+},[currentUser]);
 
-
-const handleGroupChange = (event) => {
-    const selectedGroupId = event.target.value;
-    setSelectedGroup(event.target.value);
-    if (onGroupSelect) {
-        onGroupSelect(selectedGroupId);
-      }
-};
-
-
-
-  useEffect(() => {
-    fetchAllGroups();
-  }, []);
-
-  
-
- // Dohvatanje grupa u kojima se korisnik nalazi
- 
-    const fetchUserGroups = useCallback( async () => {
+const fetchUserGroups = useCallback( async () => {
     if (userId) {
         try {
           const response = await axios.get(`/api/groups/${userId}/groups`);
@@ -58,6 +51,26 @@ const handleGroupChange = (event) => {
       }
     }, [userId]);
 
+
+ const handleOpenSelect = useCallback(() => {
+    fetchAllGroups()
+    fetchUserGroups()
+  },[fetchAllGroups, fetchUserGroups]);
+
+
+const handleGroupChange = (event) => {
+    const selectedGroupId = event.target.value;
+    setSelectedGroup(event.target.value);
+    if (onGroupSelect) {
+        onGroupSelect(selectedGroupId);
+      }
+};
+
+  useEffect(() => {
+    if (currentUser) {
+        fetchAllGroups();
+    }
+  }, [currentUser, fetchAllGroups]);
 
   useEffect(() => {
     fetchUserGroups();
@@ -80,7 +93,7 @@ const handleGroupChange = (event) => {
       }
     }, [allGroups, userGroups, selectedGroup, onGroupSelect]);
     
-  if (loading) {
+  if (!currentUser || loading) {
     return <div>Učitavanje grupa...</div>;
   }
 

@@ -129,6 +129,92 @@ const WelcomePage = () => {
     });
   };
 
+    // 1. Dodajte state za password reset modal
+  const [showPasswordResetModal, setShowPasswordResetModal] = useState(false);
+  const [passwordResetData, setPasswordResetData] = useState({
+    email: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordResetErrors, setPasswordResetErrors] = useState({});
+
+  // 2. Handler za promenu input polja
+  const handlePasswordResetChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordResetData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Ukloni grešku za to polje
+    if (passwordResetErrors[name]) {
+      setPasswordResetErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  // 3. Handler za submit forme
+  const handlePasswordResetSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordResetErrors({});
+
+    // Validacija
+    const errors = {};
+    
+    if (!passwordResetData.email) {
+      errors.email = 'Email je obavezan';
+    } else if (!/\S+@\S+\.\S+/.test(passwordResetData.email)) {
+      errors.email = 'Email format nije valjan';
+    }
+    
+    if (!passwordResetData.newPassword) {
+      errors.newPassword = 'Nova lozinka je obavezna';
+    } else if (passwordResetData.newPassword.length < 8) {
+      errors.newPassword = 'Lozinka mora imati najmanje 8 karaktera';
+    }
+    
+    if (!passwordResetData.confirmPassword) {
+      errors.confirmPassword = 'Potvrda lozinke je obavezna';
+    } else if (passwordResetData.newPassword !== passwordResetData.confirmPassword) {
+      errors.confirmPassword = 'Lozinke se ne poklapaju';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setPasswordResetErrors(errors);
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/reset-password', {
+        email: passwordResetData.email,
+        new_password: passwordResetData.newPassword,
+        new_password_confirmation: passwordResetData.confirmPassword
+      });
+
+      if (response.data.status === 'success') {
+        alert('Lozinka je uspešno promenjena!');
+        setShowPasswordResetModal(false);
+        setPasswordResetData({ email: '', newPassword: '', confirmPassword: '' });
+      }
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setPasswordResetErrors({ general: error.response.data.message });
+      } else {
+        setPasswordResetErrors({ general: 'Došlo je do greške. Pokušajte ponovo.' });
+      }
+    }
+  };
+
+  // 4. Funkcija za zatvaranje modala
+  const handlePasswordResetCancel = () => {
+    setShowPasswordResetModal(false);
+    setPasswordResetData({ email: '', newPassword: '', confirmPassword: '' });
+    setPasswordResetErrors({});
+  };
+
+
   return (
     <div className="welcome-container" style={WelcomeStyle}>
       
@@ -165,7 +251,13 @@ const WelcomePage = () => {
             </div>
 
             <div className="forgot-password">
-              <a href="link.com">Zaboravljena lozinka?</a>
+             <button 
+                type="button" 
+                className="forgot-password-link" 
+                onClick={() => setShowPasswordResetModal(true)}
+              >
+                Zaboravljena lozinka?
+              </button>
             </div>
             
             <button type="submit" className="login-button">Login</button>
@@ -213,6 +305,66 @@ const WelcomePage = () => {
                   setErrors({});
                 }}>Otkaži</button>
                 <button type="submit">Uloguj se</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showPasswordResetModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 style={{ color: 'white' }}>Resetuj lozinku</h2>
+            <form onSubmit={handlePasswordResetSubmit}>
+              <div className="input-group">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Unesite vaš email..."
+                  value={passwordResetData.email}
+                  required
+                  onChange={handlePasswordResetChange}
+                />
+                {passwordResetErrors.email && (
+                  <p style={{ color: 'white' }} className="error-message">{passwordResetErrors.email}</p>
+                )}
+                
+                <input
+                  type="password"
+                  name="newPassword"
+                  placeholder="Nova lozinka..."
+                  value={passwordResetData.newPassword}
+                  required
+                  onChange={handlePasswordResetChange}
+                />
+                {passwordResetErrors.newPassword && (
+                  <p style={{ color: 'white' }} className="error-message">{passwordResetErrors.newPassword}</p>
+                )}
+                
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Potvrdite novu lozinku..."
+                  value={passwordResetData.confirmPassword}
+                  required
+                  onChange={handlePasswordResetChange}
+                />
+                {passwordResetErrors.confirmPassword && (
+                  <p style={{ color: 'white' }} className="error-message">{passwordResetErrors.confirmPassword}</p>
+                )}
+                
+                {passwordResetErrors.general && (
+                  <p style={{ color: 'white' }} className="error-message">{passwordResetErrors.general}</p>
+                )}
+              </div>
+              
+              <div className="modal-buttons">
+                <button type="button" onClick={handlePasswordResetCancel}>
+                  Otkaži
+                </button>
+                <button type="submit">
+                  Promeni lozinku
+                </button>
               </div>
             </form>
           </div>

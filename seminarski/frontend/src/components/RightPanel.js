@@ -60,7 +60,13 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
     useEffect(() => {
     const fetchGroupName = async () => {
           try {
-              const response = await axios.get('/api/groups'); 
+            let response;
+            if (currentUser?.role === 'admin') {
+                    response = await axios.get('/api/groupsAdm'); 
+                } else {
+                    response = await axios.get('/api/groups');
+                }
+              
               const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
               setGroupName(foundGroup?.name || "(Izaberite grupu)");
           } catch (error) {
@@ -71,7 +77,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
 
 
        fetchGroupName();
-    }, [selectedGroupId]);
+    }, [selectedGroupId, currentUser]);
 
     const handleLogout = async(e)=>{
         

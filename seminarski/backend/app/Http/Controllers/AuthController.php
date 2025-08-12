@@ -155,4 +155,72 @@ class AuthController extends Controller
 
        
     }
+
+     public function resetPassword(Request $request)
+    {
+        try {
+            // Validacija input podataka
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|exists:users,email',
+                'new_password' => 'required|min:5|confirmed',
+                'new_password_confirmation' => 'required'
+            ], [
+                'email.required' => 'Email je obavezan',
+                'email.email' => 'Email format nije valjan',
+                'email.exists' => 'Korisnik sa ovim emailom ne postoji',
+                'new_password.required' => 'Nova lozinka je obavezna',
+                'new_password.min' => 'Lozinka mora imati najmanje 5 karaktera',
+                'new_password.confirmed' => 'Lozinke se ne poklapaju',
+                'new_password_confirmation.required' => 'Potvrda lozinke je obavezna'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()->first(),
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Pronađi korisnika po email-u
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Korisnik sa ovim emailom ne postoji'
+                ], 404);
+            }
+
+            // Ažuriraj lozinku
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            // Log aktivnosti (opciono)
+            \Log::info('Password reset successful', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip' => $request->ip(),
+                'timestamp' => now()
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lozinka je uspešno promenjena'
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Password reset error', [
+                'error' => $e->getMessage(),
+                'email' => $request->email ?? 'N/A',
+                'ip' => $request->ip()
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Došlo je do greške pri promeni lozinke. Pokušajte ponovo.'
+            ], 500);
+        }
+    }
+
 }

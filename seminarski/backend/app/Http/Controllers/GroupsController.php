@@ -18,6 +18,7 @@ class GroupsController extends Controller
 
     public function getGroups(Request $request)
     {
+        /*
 
             try {
         $user = $request->user();
@@ -40,12 +41,46 @@ class GroupsController extends Controller
                 'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
             ], 500);
         }
+*/
+            try {
+        // Uzimamo prosleđene parametre iz query string-a
+        $userId = $request->query('user_id');
+        $userRole = $request->query('user_role');
+        
+        // Debug da vidimo šta stiže
+        \Log::info('getGroups called with:', ['user_id' => $userId, 'user_role' => $userRole]);
+        
+        if (!$userId || $userRole === 'guest') {
+            // Ako korisnik nije prosleđen ili je guest, vraćamo samo javne grupe
+            $groups = Group::where('is_private', 0)->get();
+        } else {
+            // Za ostale korisnike vraćamo sve grupe (i privatne i javne)
+            $groups = Group::all();
+        }
+        
+        // Debug da vidimo koliko grupa vraćamo
+        \Log::info('Returning groups count:', ['count' => $groups->count()]);
+
+        return response()->json([
+            'status' => 'success',
+            'groups' => $groups
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error in getGroups:', ['error' => $e->getMessage()]);
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
+        ], 500);
+    }
+
 
     }
+    /*
     public function getGroupsForAdmin(Request $request) 
         {
-            // Admin endpoint - vraća sve grupe bez provere autentifikacije
+            
             try {
+                \Log::info('Poziv getGroupsForAdmin');
                 $groups = Group::all();
                 return response()->json([
                     'status' => 'success',
@@ -59,7 +94,7 @@ class GroupsController extends Controller
             }
         }
 
-
+    */
 
     //kreiranje nove chat sobe
     public function addNewGroup(Request $request, $userId)

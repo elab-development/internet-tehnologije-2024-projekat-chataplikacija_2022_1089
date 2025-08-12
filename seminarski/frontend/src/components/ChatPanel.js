@@ -67,7 +67,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
         
                 
                 if (currentUser?.role === 'admin') {
-                    response = await axios.get('/api/admin/groups'); 
+                    response = await axios.get('/api/groupsAdm'); 
                 } else {
                     response = await axios.get('/api/groups');
                 }
@@ -600,7 +600,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
          (filteredMessages || messages).length === 0 ? (
                     <p className="no-messages">
                       {filteredMessages ? "Nema rezultata pretrage." 
-                      : "Još nema poruka. Budite prvi koji će započeti razgovor!"}
+                      : (currentUser && currentUser.role === 'admin') ? "Nema poruka u ovoj grupi!" : "Još nema poruka. Budite prvi koji će započeti razgovor!"}
                       </p>
                 ) : (
                   (filteredMessages ||messages).map((msg, index) => {
