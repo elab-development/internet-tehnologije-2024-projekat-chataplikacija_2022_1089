@@ -55,8 +55,7 @@ Napredne opcije (privatne grupe, dodatna administracija) mogu se omogućiti pute
 - [MDN Web Docs – JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)  
 - [MySQL Documentation](https://dev.mysql.com/doc/)  
 - [Pusher Documentation](https://pusher.com/docs)  
-- [ChatGPT (OpenAI)](https://chat.openai.com)  
-- [Claude (Anthropic)](https://claude.ai)  
+
 
 ---
 
