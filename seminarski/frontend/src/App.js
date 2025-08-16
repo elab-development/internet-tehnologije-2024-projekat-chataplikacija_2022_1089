@@ -5,8 +5,6 @@ import Register from './components/Register';
 import WelcomePage from './components/WelcomePage';
 import GlavnaStr from './components/GlavnaStr';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-//import GifSelector from './components/GifSelector';
-
 
 const theme = createTheme();
 function App() {

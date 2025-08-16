@@ -18,16 +18,15 @@ class GroupsController extends Controller
 
     public function getGroups(Request $request)
     {
-        /*
-
             try {
-        $user = $request->user();
-
-        if (!$user || $user->role === 'guest') {
-            // Ako korisnik nije ulogovan ili je guest, vraćamo samo javne grupe
+        
+        $userId = $request->query('user_id');
+        $userRole = $request->query('user_role');
+        
+        if (!$userId || $userRole === 'guest') {
+            // Ako korisnik nije prosleđen ili je guest, vraćamo samo javne grupe
             $groups = Group::where('is_private', 0)->get();
         } else {
-            // Za ostale korisnike vraćamo sve grupe
             $groups = Group::all();
         }
 
@@ -36,67 +35,14 @@ class GroupsController extends Controller
             'groups' => $groups
         ], 200);
         } catch (\Exception $e) {
-             return response()->json([
+           
+            return response()->json([
                 'status' => 'error',
                 'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
             ], 500);
         }
-*/
-            try {
-        // Uzimamo prosleđene parametre iz query string-a
-        $userId = $request->query('user_id');
-        $userRole = $request->query('user_role');
-        
-        // Debug da vidimo šta stiže
-        \Log::info('getGroups called with:', ['user_id' => $userId, 'user_role' => $userRole]);
-        
-        if (!$userId || $userRole === 'guest') {
-            // Ako korisnik nije prosleđen ili je guest, vraćamo samo javne grupe
-            $groups = Group::where('is_private', 0)->get();
-        } else {
-            // Za ostale korisnike vraćamo sve grupe (i privatne i javne)
-            $groups = Group::all();
-        }
-        
-        // Debug da vidimo koliko grupa vraćamo
-        \Log::info('Returning groups count:', ['count' => $groups->count()]);
-
-        return response()->json([
-            'status' => 'success',
-            'groups' => $groups
-        ], 200);
-    } catch (\Exception $e) {
-        \Log::error('Error in getGroups:', ['error' => $e->getMessage()]);
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
-        ], 500);
     }
-
-
-    }
-    /*
-    public function getGroupsForAdmin(Request $request) 
-        {
-            
-            try {
-                \Log::info('Poziv getGroupsForAdmin');
-                $groups = Group::all();
-                return response()->json([
-                    'status' => 'success',
-                    'groups' => $groups
-                ], 200);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Greška pri dohvatanju grupa: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-    */
-
-    //kreiranje nove chat sobe
+   
     public function addNewGroup(Request $request, $userId)
     {
 
@@ -178,7 +124,6 @@ class GroupsController extends Controller
             // dohvatanje korisnika bez dupliranja
             $group->users()->syncWithoutDetaching($validated['user_ids']);
 
-            // Koristimo direktan upit za dohvatanje korisnika
             return response()->json([
                 'message' => 'Korisnici uspešno dodati u grupu',
                 'users' => DB::table('users')
@@ -203,8 +148,6 @@ class GroupsController extends Controller
             ->groupBy('groups.id', 'groups.name')
             ->orderBy('message_count', 'desc')
             ->get();
-
-            
 
         return response()->json($groupActivity);
     }
@@ -280,22 +223,7 @@ class GroupsController extends Controller
 
     }
     public function deleteWallpaper(int $groupId){
-        /*try {
-            $group = Group::findOrFail($groupId);
-            
-            // Postavlja vrednost 'wallpaper' kolone na null
-            $group->wallpaper = null;
-            $group->save();
-            
-            return response()->json([
-                'message' => 'Pozadina uspešno obrisana'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Došlo je do greške prilikom brisanja pozadine'
-           ], 500);
-          
-        }*/
+       
         try {
             $group = Group::findOrFail($groupId);
             $group->wallpaper = null;
@@ -305,7 +233,6 @@ class GroupsController extends Controller
                 'message' => 'Pozadina uspešno obrisana'
             ]);
         } catch (\Exception $e) {
-            // Vrati sve detalje greške u odgovoru
             return response()->json([
                 'message' => 'Došlo je do greške prilikom brisanja pozadine',
                 'error' => $e->getMessage(),

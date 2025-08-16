@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/WelcomePage.css';
 import backgroundImage from '../welcomee.jpg';
 import axios from "axios";
-
+import Person4Icon from '@mui/icons-material/Person4';
 
 const WelcomePage = () => {
 
@@ -42,6 +42,8 @@ const WelcomePage = () => {
     try {
 
       await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
+      await new Promise(resolve => setTimeout(resolve, 200));
       // Slanje zahteva 
       const response = await axios.post('api/login', {
         email: loginData.email,
@@ -51,7 +53,7 @@ const WelcomePage = () => {
       }
     );
 
-      localStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));
+      sessionStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));
       console.log("uspesno je ulogovan", response.data)
       
       
@@ -75,13 +77,15 @@ const WelcomePage = () => {
     try {
 
       await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
-      
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+
       const response = await axios.post('api/guest-login',{},{
         withCredentials: true //za cookies
       });
 
-      localStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));
-  
+      sessionStorage.setItem('ulogovani_user', JSON.stringify(response.data.user));
+      await new Promise(resolve => setTimeout(resolve, 300));
   
       setShowGuestModal(false);
       console.log("uspesno je usao gost", response.data);
@@ -101,7 +105,6 @@ const WelcomePage = () => {
   const handleAdminSubmit = (e) => {
     e.preventDefault();
     
-    // Proveri admin credentials
     if (adminCredentials.email === 'Admin' && adminCredentials.password === 'admin') {
       const adminUser = {
         id: 'admin',
@@ -110,7 +113,7 @@ const WelcomePage = () => {
         role: 'admin'
       };
       
-      localStorage.setItem('ulogovani_user', JSON.stringify(adminUser));
+      sessionStorage.setItem('ulogovani_user', JSON.stringify(adminUser));
       setShowAdminModal(false);
       setAdminCredentials({ email: '', password: '' });
       setErrors({});
@@ -129,7 +132,6 @@ const WelcomePage = () => {
     });
   };
 
-    // 1. Dodajte state za password reset modal
   const [showPasswordResetModal, setShowPasswordResetModal] = useState(false);
   const [passwordResetData, setPasswordResetData] = useState({
     email: '',
@@ -138,7 +140,7 @@ const WelcomePage = () => {
   });
   const [passwordResetErrors, setPasswordResetErrors] = useState({});
 
-  // 2. Handler za promenu input polja
+  
   const handlePasswordResetChange = (e) => {
     const { name, value } = e.target;
     setPasswordResetData(prev => ({
@@ -146,7 +148,7 @@ const WelcomePage = () => {
       [name]: value
     }));
     
-    // Ukloni grešku za to polje
+    
     if (passwordResetErrors[name]) {
       setPasswordResetErrors(prev => ({
         ...prev,
@@ -155,12 +157,11 @@ const WelcomePage = () => {
     }
   };
 
-  // 3. Handler za submit forme
   const handlePasswordResetSubmit = async (e) => {
     e.preventDefault();
     setPasswordResetErrors({});
 
-    // Validacija
+    
     const errors = {};
     
     if (!passwordResetData.email) {
@@ -207,7 +208,7 @@ const WelcomePage = () => {
     }
   };
 
-  // 4. Funkcija za zatvaranje modala
+  // Funkcija za zatvaranje modala
   const handlePasswordResetCancel = () => {
     setShowPasswordResetModal(false);
     setPasswordResetData({ email: '', newPassword: '', confirmPassword: '' });
@@ -219,7 +220,7 @@ const WelcomePage = () => {
     <div className="welcome-container" style={WelcomeStyle}>
       
       <button className="admin-button" onClick={handleAdminLogin} title="Admin Login">
-        A
+      <Person4Icon></Person4Icon>
       </button>
       <div className="login-container">
         

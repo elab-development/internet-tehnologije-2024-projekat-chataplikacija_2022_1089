@@ -15,10 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('email')->unique();
-            $table->string('password')->nullable(); // nullable za guest korisnike
+            $table->string('password')->nullable(); 
             $table->enum('role', ['guest', 'user', 'admin'])->default('user');
-            //profile picture nekako
-            //$table->rememberToken();
             $table->timestamps();
         });
     }

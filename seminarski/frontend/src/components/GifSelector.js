@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Dialog,
@@ -55,7 +55,7 @@ const GifSelector = ({ open, onClose, onSelectGif }) => {
     if (open && searchQuery) {
       fetchGifs(searchQuery);
     }
-  }, [open]);
+  }, [open, searchQuery]);
 
   // Funkcija za odabir GIF-a
   const handleSelectGif = (gifUrl) => {

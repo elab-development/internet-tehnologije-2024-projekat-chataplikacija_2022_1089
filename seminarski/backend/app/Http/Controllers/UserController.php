@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    //Dohvata listu svih korisnika.
 
     public function getAllUsers()
     {

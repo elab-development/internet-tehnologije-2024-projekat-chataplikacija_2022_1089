@@ -33,9 +33,8 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        //'remember_token',
+        
     ];
-    // Metode za proveru role
     public function isAdmin()
     {
         return $this->role === 'admin';

@@ -25,7 +25,6 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
     const [groupName, setGroupName] = useState("");
     const [message, setMessage] =useState("");
     const [messages, setMessages] = useState([]);
-    //const [currentUser, setCurrentUser] = useState(null);
     const messagesEndRef = useRef(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [editingMessage, setEditingMessage] = useState(null);
@@ -56,33 +55,41 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
     useEffect(() => {
         if (!selectedGroupId) {
           setGroupName("Izaberite grupu");
+          setFilteredMessages(null); 
         return;
         }
-
+        setFilteredMessages(null);
 
         const fetchGroupName = async () => {
-         
-                try {
-            let response;
-        
-                
+          
+             try {
+                let response;
                 if (currentUser?.role === 'admin') {
-                    response = await axios.get('/api/groupsAdm'); 
-                } else {
-                    response = await axios.get('/api/groups');
+                        response = await axios.get('/api/groupsAdm'); 
+                    } else {
+                        response = await axios.get('/api/groups', {
+                            params: {
+                                user_id: currentUser?.id,
+                                user_role: currentUser?.role
+                            }
+                        });
+                    }
+                    
+                    
+                    const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
+                    
+                    
+                    setGroupName(foundGroup?.name || "(Grupa nije pronađena)");
+                    
+                } catch (error) {
+                    console.error("Greška pri dohvatanju imena grupe:", error);
+                    setGroupName("(Greška pri učitavanju)");
                 }
-                
-                const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
-                setGroupName(foundGroup?.name);
-                
-            } catch (error) {
-                console.error("Greška pri dohvatanju imena grupe:", error);
-                setGroupName("(Izaberite grupu)");
-            }
             };
 
         const fetchMessages = async () => {
             try {
+              await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
               const response = await axios.get(`/api/messages/${selectedGroupId}`, {
                 withCredentials:true
               });
@@ -101,13 +108,13 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
 
 
     // Automatski scroll na dno chata kada stižu nove poruke
-        useEffect(() => {
-            scrollToBottom();
-        }, [messages]);
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
-        const scrollToBottom = () => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        };
+    const scrollToBottom = () => {
+         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
     
     const handleSendMessage = async (customMessage=null) => {
       
@@ -115,7 +122,6 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
             (typeof customMessage === 'string' ? customMessage : JSON.stringify(customMessage)) : 
             message;
 
-            // Provjera da li je string i da li nije prazan
             if (!messageToSend || typeof messageToSend !== 'string' ||
                !messageToSend.trim() || !selectedGroupId) return;
       
@@ -163,9 +169,6 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
           if (!confirmed) {
             return;
           }
-            
-            
-            
              await axios.delete(`/api/messages/${messageId}`, {
              withCredentials:true
               
@@ -195,20 +198,18 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
     const submitEditMessage = async () => {
         try {
          
-          
           const response =await axios.put(`/api/messages/${editingMessage}`, 
+           
             { content: editMessageContent },
-            { 
-              withCredentials:true
-            }
+            { withCredentials:true}
 
           );
 
-          
+          await new Promise(resolve => setTimeout(resolve, 300));
          
           setMessages(prevMessages => 
             prevMessages.map(msg => 
-              msg.id === editingMessage ? response.data.message : msg
+              msg.id === editingMessage ? { ...response.data.message, user: msg.user } : msg
             )
           );
           
@@ -233,9 +234,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
           if (!confirmed) {
             return;
           }
-            
-            
-            
+
              await axios.delete(`/api/groups/${groupId}`);
             onGroupDeleted(null);
             onLeaveGroup(true);
@@ -265,6 +264,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
 
       const handleSearchToggle = async() => {
         if (selectedGroupId) {
+          
           setIsSearchVisible(!isSearchVisible);
         } else {
           await showAlertDialog(
@@ -277,6 +277,7 @@ function ChatPanel({ selectedGroupId, onGroupDeleted, onLeaveGroup, currentUser 
       const handleCloseSearchToggle=()=>{
         if (selectedGroupId) {
           setIsSearchVisible(false);
+          setFilteredMessages(null);
         }
       }
       const handleDeleteToggle= async()=> {

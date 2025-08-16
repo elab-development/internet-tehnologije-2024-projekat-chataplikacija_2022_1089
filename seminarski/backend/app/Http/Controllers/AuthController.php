@@ -19,17 +19,14 @@ use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
-    // Registracija regularnog korisnika
     public function register(Request $request)
     {
-        // Validacija unetih podataka
+       
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:5|confirmed',
-            //'conformPass' => 'required|same:password' 
         ], [
-            // Prilagođene poruke za greške
             'username.unique' => 'Korisničko ime je već zauzeto.',
             'email.unique' => 'Email adresa je već registrovana.',
             'password.min' => 'Lozinka mora imati najmanje 5 karaktera.',
@@ -37,8 +34,6 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            // Logovanje grešaka
-            Log::error('Validation Errors:', $validator->errors()->toArray());
 
             return Response::json([
                 'errors' => $validator->errors()
@@ -69,21 +64,9 @@ class AuthController extends Controller
                 'email' => ['Podaci za prijavljivanje su neispravni.'],
             ]);
         }
-
         Auth::login($user);
-
-        // Kreiranje tokena
-        //$token = $user->createToken('auth_token')->plainTextToken;
-        //
-       // $refreshToken = Str::random(60);
-
-        //$user->update([
-            //'refresh_token' => Hash::make($refreshToken),
-           // 'refresh_token_expiry' => now()->addDays(30) // 30 dana važenja
-       // ]);
-
         return Response::json([
-            //'token' => $token,
+            
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
@@ -92,7 +75,6 @@ class AuthController extends Controller
             ]
             ]);;
         
-
     }
 
 
@@ -102,12 +84,10 @@ class AuthController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-        // Generiše novi redni broj gosta
         $guestNumber = $lastGuestUser
             ? (int)Str::replace('Gost', '', $lastGuestUser->username) + 1
             : 1;
 
-        // Kreiranje novog gost korisnika
         $guestUser = User::create([
             'username' => 'Gost' . $guestNumber,
             'email' => null,
@@ -116,7 +96,6 @@ class AuthController extends Controller
         ]);
         Auth::login($guestUser);
 
-       // $token = $guestUser->createToken('auth_token')->plainTextToken;
 
         return Response::json([
             
@@ -131,35 +110,37 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        
-        //$request->user()->tokens()->delete();
-    
-       
         Auth::guard('web')->logout();
-        
-       
+
         $request->session()->invalidate();
-        
-        
+
         $request->session()->regenerateToken();
     
         return response()->json(['message' => 'Uspešno ste se odjavili']);
        
-        
-      
     }
 
     public function getCurrentUser(Request $request)
     {
         return response()->json($request->user());
 
-       
+       if (!$user) {
+        return response()->json([
+            'message' => 'Korisnik nije autentifikovan'
+        ], 401);
+        }
+        
+        return response()->json([
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'role' => $user->role
+        ]);
     }
 
      public function resetPassword(Request $request)
     {
         try {
-            // Validacija input podataka
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|exists:users,email',
                 'new_password' => 'required|min:5|confirmed',
@@ -181,8 +162,6 @@ class AuthController extends Controller
                     'errors' => $validator->errors()
                 ], 422);
             }
-
-            // Pronađi korisnika po email-u
             $user = User::where('email', $request->email)->first();
 
             if (!$user) {
@@ -196,13 +175,6 @@ class AuthController extends Controller
             $user->password = Hash::make($request->new_password);
             $user->save();
 
-            // Log aktivnosti (opciono)
-            \Log::info('Password reset successful', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'ip' => $request->ip(),
-                'timestamp' => now()
-            ]);
 
             return response()->json([
                 'status' => 'success',
@@ -210,11 +182,6 @@ class AuthController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            \Log::error('Password reset error', [
-                'error' => $e->getMessage(),
-                'email' => $request->email ?? 'N/A',
-                'ip' => $request->ip()
-            ]);
 
             return response()->json([
                 'status' => 'error',

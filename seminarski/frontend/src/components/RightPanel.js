@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react'
+import {useState, useEffect} from 'react'
 import { useNavigate  } from 'react-router-dom';
 import { Button, Tooltip} from '@mui/material';
 import axios from 'axios';
@@ -13,8 +13,7 @@ import { useAlertDialog } from './AlertDialogContext';
 
 
 const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
-  // console.log("RightPanel currentUser:", currentUser);
-   //console.log("Renderovanje desne komponente");
+
     
     const [groupUsers, setGroupUsers] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -36,6 +35,7 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
     const fetchGroupUsers = async (groupId) => {
       setLoading(true);
       try {
+        await new Promise(resolve => setTimeout(resolve, 300));
         const response = await axios.get(`/api/groups/${groupId}/users`);
         setGroupUsers(response.data.users);
       } catch (error) {
@@ -59,20 +59,29 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
     
     useEffect(() => {
     const fetchGroupName = async () => {
-          try {
-            let response;
-            if (currentUser?.role === 'admin') {
-                    response = await axios.get('/api/groupsAdm'); 
-                } else {
-                    response = await axios.get('/api/groups');
+             try {
+                let response;
+                if (currentUser?.role === 'admin') {
+                        response = await axios.get('/api/groupsAdm'); 
+                    } else {
+                        response = await axios.get('/api/groups', {
+                            params: {
+                                user_id: currentUser?.id,
+                                user_role: currentUser?.role
+                            }
+                        });
+                    }
+                    
+                    
+                    const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
+                    
+                    
+                    setGroupName(foundGroup?.name || "(Grupa nije pronađena)");
+                    
+                } catch (error) {
+                    console.error("Greška pri dohvatanju imena grupe:", error);
+                    setGroupName("(Greška pri učitavanju)");
                 }
-              
-              const foundGroup = response.data.groups.find(group => group.id === selectedGroupId);
-              setGroupName(foundGroup?.name || "(Izaberite grupu)");
-          } catch (error) {
-              console.error("Greška pri dohvatanju imena grupe:", error);
-              setGroupName("(Izaberite grupu)");
-            }
           };
 
 
@@ -94,16 +103,19 @@ const RightPanel = ({ selectedGroupId, onStatisticsClick, currentUser}) => {
          if (currentUser?.role === 'admin') {
               
               console.log("Admin se odjavlja");
-              localStorage.removeItem('ulogovani_user');
+              sessionStorage.removeItem('ulogovani_user');
               navigate('/');
           }
           else {
+
+            await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+
             await axios.post('/api/logout', {}, {
               withCredentials: true
           });
-
+          await new Promise(resolve => setTimeout(resolve, 300));
           console.log("korisnik uspesno odjavljen");
-          localStorage.removeItem('ulogovani_user');
+          sessionStorage.removeItem('ulogovani_user');
           navigate('/');
           }
         } catch (error) {

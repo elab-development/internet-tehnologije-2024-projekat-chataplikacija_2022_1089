@@ -143,14 +143,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5%; /* Umesto fiksnih 10px */
-  margin-top: 2.5%; /* Umesto fiksnih 10px */
+  gap: 2.5%; 
+  margin-top: 2.5%; 
 }
 .hop-in-group-button {
   background-color: #456db4 !important;
   color: white !important;
   border-radius: 8px !important;
-  padding: 0.5rem 1rem !important; /* Umesto fiksnih piksela */
+  padding: 0.5rem 1rem !important; 
   min-width: auto !important;
   
 }

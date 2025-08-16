@@ -1,6 +1,7 @@
 import React,{useState, useEffect, useCallback} from "react";
 import "../styles/GlavnaStr.css";
 import LeftPanel from "./LeftPanel";
+import { useNavigate } from 'react-router-dom';
 import RightPanel from "./RightPanel";
 import ChatPanel from "./ChatPanel";
 import GroupActivityChart from './GroupActivityChart';
@@ -16,51 +17,51 @@ const GlavnaStr = () => {
   const [leaveGroup, setLeaveGroup] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    /*const fetchCurrentUser = async () => {
-      
-      try {
-        const response = await axios.get('/api/user', {
-          withCredentials: true
-        });
-        setCurrentUser(response.data);
-        //console.log("CurrenUser:", response.data);
-      } catch (error) {
-        console.error("Greška pri dohvatanju korisnika:", error);
-      }
-    };*/
+ 
     const fetchCurrentUser = async () => {
         try {
-          // Prvo proverite da li je admin lokalno ulogovan
-          const storedUser = localStorage.getItem('ulogovani_user');
+          const storedUser = sessionStorage.getItem('ulogovani_user');
+
+          await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
+          await new Promise(resolve => setTimeout(resolve, 200));
+
           if (storedUser) {
             const user = JSON.parse(storedUser);
-            if (user.role === 'admin') {
-              setCurrentUser(user);
-              return; // Prekini izvršavanje, ne pozivaj API
-            }
+              if (user.role === 'guest') {
+                console.log('Guest user detected, validating session...');
+                try {
+                  const response = await axios.get('/api/user', { withCredentials: true });
+                  setCurrentUser(response.data);
+                  console.log('Guest session valid');
+                } catch (guestError) {
+                  console.log('Guest session invalid, removing...');
+                  throw guestError; 
+                }
+              } else {
+                console.log('Regular user, using stored data');
+                setCurrentUser(user);
+              }
+
+          }else {
+            const response = await axios.get('/api/user', { withCredentials: true });
+            sessionStorage.setItem('ulogovani_user', JSON.stringify(response.data));
+            setCurrentUser(response.data);
           }
-          
-          // Za obične korisnike pozovi API
-          const response = await axios.get('/api/user', {
-            withCredentials: true
-          });
-          setCurrentUser(response.data);
+        
         } catch (error) {
-          console.error("Greška pri dohvatanju korisnika:", error);
-          // Možda je korisnik admin ali API ne radi
-          const storedUser = localStorage.getItem('ulogovani_user');
-          if (storedUser) {
-            const user = JSON.parse(storedUser);
-            if (user.role === 'admin') {
-              setCurrentUser(user);
-            }
-          }
+         
+           console.error("Sesija ne važi:", error);
+            sessionStorage.removeItem('ulogovani_user');
+            navigate('/');
+        
         }
       };
     
     fetchCurrentUser();
-  }, []);
+  }, [navigate]);
 
   
 

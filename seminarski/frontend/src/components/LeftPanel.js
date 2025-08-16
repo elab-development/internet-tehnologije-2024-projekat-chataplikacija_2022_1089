@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import '../styles/LeftPanel.css';
 import { Button, Tooltip } from '@mui/material';
 import axios from 'axios';
@@ -16,7 +16,7 @@ import HopInGroup from './HopInGroup';
       const [groupData, setGroupData] = useState({
           name: "",
           description:"",
-          is_private: 1,//difoltno je privatna
+          is_private: 1,
         });
         const [openDialog, setOpenDialog] = useState(false);
 
@@ -39,13 +39,6 @@ import HopInGroup from './HopInGroup';
         // eslint-disable-next-line no-unused-vars
         const [resetGroupSelection, setResetGroupSelection] = useState(null);
         const groupsPerPage = 4;
-        
-        
-      //const userDataString = localStorage.getItem('ulogovani_user');
-        //let userId = null;
-        //const userData = JSON.parse(userDataString);
-        //userId = userData.id; 
-        //console.log('Stored user ID:', userId);
         
 
         const handleAddGroup = async  (formData) => {
@@ -110,10 +103,8 @@ import HopInGroup from './HopInGroup';
                await axios.post(`/api/groups/${selectedGroupId}/usersadd`, {
                 user_ids: [userIdd]
               });
-          
-              
-              myGroups(); // Funkcija za osvežavanje liste grupa
-              
+
+              myGroups();
               // Resetovanje selektovane grupe
               setSelectedGroupId(null);
              
@@ -127,7 +118,7 @@ import HopInGroup from './HopInGroup';
         
 
         const userIddd = currentUser?.id;
-        const myGroups = useCallback( async()=>{
+      const myGroups = useCallback( async()=>{
         
          try {
             let response;
@@ -148,7 +139,7 @@ import HopInGroup from './HopInGroup';
             console.error("Greška pri dohvatanju grupa:", error);
           }
 
-        }, [currentPage, groupsPerPage, userIddd, currentUser/* onLeaveGroup*/]);
+      }, [currentPage, groupsPerPage, userIddd, currentUser/* onLeaveGroup*/]);
 
         
 
@@ -158,33 +149,33 @@ import HopInGroup from './HopInGroup';
           setDisplayedGroups(myGroups.slice(startIndex, endIndex));
         };
       
-          // Funkcije za navigaciju kroz stranice
-          const goToNextPage = () => {
-            if (currentPage < totalPages) {
-              const nextPage = currentPage + 1;
-              setCurrentPage(nextPage);
-              updateDisplayedGroups(groups, nextPage);
-            }
-          };
       
-          const goToPreviousPage = () => {
-            if (currentPage > 1) {
-              const prevPage = currentPage - 1;
-              setCurrentPage(prevPage);
-              updateDisplayedGroups(groups, prevPage);
-            }
-          };
+      const goToNextPage = () => {
+        if (currentPage < totalPages) {
+          const nextPage = currentPage + 1;
+          setCurrentPage(nextPage);
+          updateDisplayedGroups(groups, nextPage);
+        }
+      };
+      
+      const goToPreviousPage = () => {
+           if (currentPage > 1) {
+            const prevPage = currentPage - 1;
+             setCurrentPage(prevPage);
+             updateDisplayedGroups(groups, prevPage);
+          }
+      };
 
-          useEffect(() => {
-            if(onLeaveGroup===true){
+      useEffect(() => {
+          if(onLeaveGroup===true){
               myGroups();
             }
             myGroups(); 
-          }, [myGroups, onLeaveGroup]); 
+      }, [myGroups, onLeaveGroup]); 
 
-          useEffect(() => {
-            updateDisplayedGroups(groups, currentPage);
-          }, [currentPage, groups]);
+      useEffect(() => {
+          updateDisplayedGroups(groups, currentPage);
+      }, [currentPage, groups]);
       
 
         const handleGroupClick = (groupId) => {

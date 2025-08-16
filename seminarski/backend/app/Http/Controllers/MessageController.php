@@ -52,8 +52,6 @@ class MessageController extends Controller
 
             $message->load('user');
 
-            // Emituj događaj za WebSockets
-            //broadcast(new MessageSent($message))->toOthers();
 
             return response()->json(['message' => $message]);
         } catch (\Exception $e) {
@@ -66,7 +64,6 @@ class MessageController extends Controller
             return response()->json(['message' => 'Nemate dozvolu za brisanje ove poruke'], 403);
         }
 
-        // Brisanje poruke
         $message->delete();
 
         return response()->json(['message' => 'Poruka uspešno obrisana']);

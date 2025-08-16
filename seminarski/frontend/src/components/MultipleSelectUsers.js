@@ -34,7 +34,6 @@ export default function MultipleSelectUsers({ selectedGroupId, onUserSelect,user
   const [availableUsers, setAvailableUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Dohvatanje svih korisnika
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
@@ -106,7 +105,6 @@ export default function MultipleSelectUsers({ selectedGroupId, onUserSelect,user
       <FormControl sx={{ width: '100%', maxWidth:"100%" }}>
         <InputLabel id="multiple-user-select-label"sx={{
       '&.MuiInputLabel-shrink': {
-        // Povećava prostor za labelu kada je smanjeno (pomereno gore)
         transform: 'translate(14px, -7px) scale(0.69)',
         
       }

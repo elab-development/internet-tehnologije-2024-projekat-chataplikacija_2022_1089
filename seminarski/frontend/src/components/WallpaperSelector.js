@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import "../styles/WallpaperSelector.css";
 import {
@@ -77,7 +77,7 @@ const WallpaperSelector = ({ open, onClose, onSelectWallpaper, onDeleteWallpaper
   }
   }, [selectedTheme, open]);
 
-  // Funkcija za odabir slike kao pozadine
+  
   const handleSelectImage = (imageUrl) => {
     onSelectWallpaper(imageUrl);
     onClose();
